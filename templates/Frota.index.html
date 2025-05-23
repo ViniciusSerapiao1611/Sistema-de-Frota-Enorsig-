@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | Enorsul</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
+
 <body>
   {% if error %}
   <div class="alert alert-danger">{{ error }}</div>
   {% endif %}
-  
+
   <div class="container">
     <div class="esquerda" id="esquerda">
       <div class="form-recuperar" id="formRecuperar">
@@ -24,24 +26,24 @@
       <span id="tituloLogin">Login</span>
     </div>
 
-<div class="direita" id="direita">
-<form method="POST" action="{{ url_for('login') }}" class="mx-auto" style="max-width: 400px;">
-    <div class="login-box">
-      <img src="img/logo_enorsul.png" alt="Logo" class="logo">
-      <input type="text" placeholder="E-mail*" name="emaillogin"/>
-      <input type="password" placeholder="Senha*" name="password"/>
-    <div class="opcoes">
-      <label><input type="checkbox"> Lembrar</label>
-      <a id="linkRecuperar">Esqueci a senha</a>
+    <div class="direita" id="direita">
+      <form method="POST" action="{{ url_for('login') }}" class="mx-auto" style="max-width: 400px;">
+        <div class="login-box">
+          <img src="{{url_for('static', filename='img/logo_enorsul.png')}}" alt="Logo" class="logo">
+          <input type="text" placeholder="E-mail*" name="emaillogin" />
+          <input type="password" placeholder="Senha*" name="password" />
+          <div class="opcoes">
+            <label><input type="checkbox"> Lembrar</label>
+            <a id="linkRecuperar">Esqueci a senha</a>
+          </div>
+          <div class="form-actions">
+            <button class="btn-entrar" type="submit">Entrar</button>
+          </div>
+      </form>
     </div>
-    <div class="form-actions">
-      <button class="btn-entrar" type="submit">Entrar</button>
-    </div>
-  </form>
-      </div>
-        
-      </div>
-    </div>
+
+  </div>
+  </div>
   </div>
 
   <script>
@@ -75,4 +77,5 @@
     }
   </script>
 </body>
+
 </html>

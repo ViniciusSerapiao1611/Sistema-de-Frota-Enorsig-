@@ -78,7 +78,7 @@ def atualizar_status(id):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            UPDATE dbo.tab_base SET Status = ? WHERE ID = ?
+            UPDATE dbo.tab_base SET STATUS = ? WHERE ID = ?
         """, novo_status, id)
         conn.commit()
         conn.close()
@@ -305,6 +305,9 @@ def login():
                 session['acesso'] = usuario[8]
                 session['user_name'] = usuario[1]
 
+                if session['acesso'] == "Motorista":
+                    return redirect(url_for('cadastroabastecimento'))
+
                 return redirect(url_for('index'))
             else:
                 logging.warning(f"Senha incorreta para o usuário: {email}")
@@ -315,6 +318,14 @@ def login():
             return render_template('Frota.index.html', error='Usuário não encontrado')
         
     return render_template('Frota.index.html')
+
+@app.route('/cadastroabastecimento')
+def cadastroabastecimento():
+    return render_template('cadastro_abastecimento.html')
+
+@app.route('/cadastrokm')
+def cadastrokm():
+    return render_template('cadastro_km.html')
 
 @app.route('/relatorios')
 def relatorios():
@@ -377,8 +388,12 @@ def base():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     if session.get('acesso') != 'operador':
+       
+        
+            
         return render_template('base.html')
     else:
+        
         return redirect(url_for('index'))
 
 @app.route('/cartaocombustivel')
@@ -386,7 +401,25 @@ def cartaocombustivel():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     if session.get('acesso') != 'operador':
-        return render_template('cartao_combustivel.html')
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT NOME_BASE FROM tab_base""")
+        bases = []
+        for row in cursor.fetchall():
+            bases.append({
+                'Nome':row[0]
+            })
+
+        cursor.execute("""SELECT PLACA, MODELO FROM tab_veiculos """)
+                       # WHERE CARTAO_ATIVO <> 1
+        veiculos = []
+        for row in cursor.fetchall():
+            veiculos.append({
+                'Placa':row[0],
+                'Modelo':row[1]
+            })
+
+        return render_template('cartao_combustivel.html', bases=bases,veiculos=veiculos)
     else:
         return redirect(url_for('index'))
 

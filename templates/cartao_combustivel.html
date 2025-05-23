@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="css/cartao_combustivel.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cartao_combustivel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
-    
+
 </head>
+
 <body>
     <!-- Botão de alternância de modo escuro -->
     <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
@@ -24,53 +25,53 @@
         <div class="circulo"></div>
     </div>
 
-     <!-- Barra lateral -->
+    <!-- Barra lateral -->
     <div class="barra-lateral" id="barra-lateral">
         <h2>EnorFrota</h2>
         <ul>
-            <li class="ativo">
+            <li class="">
                 <a href="{{ url_for('index')}}">
-                <i class="fas fa-home"></i> Início
+                    <i class="fas fa-home"></i> Início
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('relatorios')}}">
-                <i class="fas fa-file-alt"></i> Relatórios
+                    <i class="fas fa-file-alt"></i> Relatórios
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('veiculos')}}">
-                <i class="fas fa-car"></i> Veículos
+                    <i class="fas fa-car"></i> Veículos
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('abastecimento')}}">
-                <i class="fas fa-gas-pump"></i> Abastecimento
+                    <i class="fas fa-gas-pump"></i> Abastecimento
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('usuarios_principal')}}">
-                <i class="fas fa-users"></i> Usuários
+                    <i class="fas fa-users"></i> Usuários
                 </a>
             </li>
-            <li>
+            <li class="ativo">
                 <a href="{{ url_for('centrocusto')}}">
-                <i class="fas fa-dollar-sign"></i> Centro de Custo
+                    <i class="fas fa-dollar-sign"></i> Centro de Custo
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('base')}}">
-                <i class="fas fa-building"></i> Base
+                    <i class="fas fa-building"></i> Base
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('cartaocombustivel')}}">
-                <i class="fas fa-credit-card"></i> Cartão
+                    <i class="fas fa-credit-card"></i> Cartão
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('logout')}}">
-                <i class="fas fa-sign-in-alt"></i> Sair
+                    <i class="fas fa-sign-in-alt"></i> Sair
                 </a>
             </li>
             <!-- Exemplo de botão/aba modo escuro na barra lateral -->
@@ -90,56 +91,73 @@
             </div>
         </div>
     </div>
-        <!-- Conteúdo principal -->
-        <div class="content-area">
-            <div class="button-group">
-                <div class="hover-indicator"></div>
-                <button class="btn ativo" data-index="0" style="color:#fff;background:#c01c1c;border-radius:20px 0 0 20px;">Cadastro</button>
-                <a href="{{url_for('recebimentocartao')}}" class="btn" data-index="1" style="text-decoration:none;display:inline-block;text-align:center;">Recebimento</a>
-                <a href="{{url_for('listacartoes')}}" class="btn" data-index="3" style="text-decoration:none;display:inline-block;text-align:center;">Lista</a>
-            </div>
-            <div id="conteudo-cadastro" class="cadastro-container">
-                <h2>Cadastro de Cartão</h2>
-                <form id="form-cartao">
-                    <div class="container">
-                        <h3>Dados do cartão</h3>
-                        <p>Preencha os dados do cartão para cadastro.</p>
-                        <div class="form-group">
-                            <div>
-                                <label for="placa-cartao">Placa Cartão *</label>
-                                <input type="text" id="placa-cartao" name="placa-cartao" maxlength="7" required pattern="[A-Za-z0-9]{7}" title="Apenas 7 caracteres, letras e números">
-                            </div>
-                            <div>
-                                <label for="base">Base *</label>
-                                <select id="base" name="base" required>
-                                    <option value="" disabled selected>Selecione a base</option>
-                                    <option value="Base 1">BASE SP</option>
-                                    <option value="Base 2">BASE V CLA</option>
-                                    <option value="Base 3">BASE RJ</option>
-                                    <!-- Adicione mais opções conforme necessário -->
-                                </select>
-                            </div>
-                            <div>
-                                <label for="valor-mensal">Valor Mensal *</label>
-                                <input type="text" id="valor-mensal" name="valor-mensal" required>
-                            </div>
-                            <div>
-                                <label for="centro-custo">Centro de Custo *</label>
-                                <input type="text" id="centro-custo" name="centro-custo" maxlength="3" required pattern="\d{3}" title="Apenas 3 números">
-                            </div>
-                            <div>
-                                <label for="data-solicitacao">Data de Solicitação *</label>
-                                <input type="text" id="data-solicitacao" name="data-solicitacao" required readonly>
-                            </div>
+    <!-- Conteúdo principal -->
+    <div class="content-area">
+        <div class="button-group">
+            <div class="hover-indicator"></div>
+            <button class="btn ativo" data-index="0"
+                style="color:#fff;background:#c01c1c;border-radius:20px 0 0 20px;">Cadastro</button>
+            <a href="{{url_for('recebimentocartao')}}" class="btn" data-index="1"
+                style="text-decoration:none;display:inline-block;text-align:center;">Recebimento</a>
+            <a href="{{url_for('listacartoes')}}" class="btn" data-index="3"
+                style="text-decoration:none;display:inline-block;text-align:center;">Lista</a>
+
+
+        </div>
+        <div id="conteudo-cadastro" class="cadastro-container">
+            <h2>Cadastro de Cartão</h2>
+            <form id="form-cartao">
+                <div class="container">
+                    <h3>Dados do cartão</h3>
+                    <p>Preencha os dados do cartão para cadastro.</p>
+                    <div class="form-group">
+                        <div>
+                            <label for="placa-cartao">Placa Cartão *</label>
+                            <select name="veiculos" id="veiculos">
+                                <option value="" disabled selected>Selecione a placa</option>
+                                {% for veiculo in veiculos %}
+                                <option value="{{ veiculo['Placa'] }}">{{ veiculo['Placa'] }}</option>
+                                {% endfor %}
+                            </select>
+                            <!--<input type="text" id="placa-cartao" name="placa-cartao" maxlength="7" required
+                                pattern="[A-Za-z0-9]{7}" title="Apenas 7 caracteres, letras e números">-->
+                        </div>
+                        <div>
+                            <label for="base">Base *</label>
+                            <select id="base" name="base" required>
+                                <option value="" disabled selected>Selecione a base</option>
+                                {% for base in bases %}
+                                <option value="{{ base['Nome'] }}">{{ base['Nome'] }}</option>
+                                {% endfor %}
+                                <!--<option value="Base 1">BASE SP</option>
+                                <option value="Base 2">BASE V CLA</option>
+                                <option value="Base 3">BASE RJ</option>-->
+                                <!-- Adicione mais opções conforme necessário -->
+                            </select>
+                        </div>
+                        <div>
+                            <label for="valor-mensal">Valor Mensal *</label>
+                            <input type="text" id="valor-mensal" name="valor-mensal" required>
+                        </div>
+                        <div>
+                            <label for="centro-custo">Centro de Custo *</label>
+                            <input type="text" id="centro-custo" name="centro-custo" maxlength="3" required
+                                pattern="\d{3}" title="Apenas 3 números">
+                        </div>
+                        <div>
+                            <label for="data-solicitacao">Data de Solicitação *</label>
+                            <input type="text" id="data-solicitacao" name="data-solicitacao" required readonly>
                         </div>
                     </div>
-                    <button type="submit">Cadastrar</button>
-                </form>
-            </div>
+                </div>
+                <button type="submit">Cadastrar</button>
+            </form>
         </div>
     </div>
+    </div>
     <!-- Notificação -->
-    <div id="notificacaoCadastro" class="notificacao-cadastro">Cartão cadastrado e enviado para a aba de recebimento!</div>
+    <div id="notificacaoCadastro" class="notificacao-cadastro">Cartão cadastrado e enviado para a aba de recebimento!
+    </div>
     <script src="script.js"></script>
     <script>
         // Verifica o estado do modo escuro ao carregar a página
@@ -192,7 +210,7 @@
             });
         });
 
-        document.getElementById('form-cartao').addEventListener('submit', function(e) {
+        document.getElementById('form-cartao').addEventListener('submit', function (e) {
             e.preventDefault();
 
             // Pegue os valores dos campos
@@ -231,7 +249,7 @@
 
         // Formata o campo Valor Mensal como moeda brasileira e limita a R$ 2.000,00
         const valorMensalInput = document.getElementById('valor-mensal');
-        valorMensalInput.addEventListener('input', function(e) {
+        valorMensalInput.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             let numberValue = parseInt(value, 10) / 100;
             if (numberValue > 2000) numberValue = 2000;
@@ -242,11 +260,11 @@
             }
         });
 
-        document.getElementById('centro-custo').addEventListener('input', function(e) {
+        document.getElementById('centro-custo').addEventListener('input', function (e) {
             this.value = this.value.replace(/\D/g, '').slice(0, 3);
         });
 
-        document.getElementById('placa-cartao').addEventListener('input', function(e) {
+        document.getElementById('placa-cartao').addEventListener('input', function (e) {
             // Permite apenas letras e números, converte para maiúsculas e limita a 7 caracteres
             this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 7);
         });
