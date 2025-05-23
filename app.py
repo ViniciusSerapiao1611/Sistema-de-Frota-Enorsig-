@@ -269,7 +269,8 @@ def listar_funcionarios():
     
 @app.route('/API/cadastrarkm')
 def cadastrokm():
-    #TODO criar rota
+    #TODO criar rota para cadastro de KM
+    
 # ROTAS DE ACESSO AS PÁGINAS #
 @app.route('/')
 def index():
