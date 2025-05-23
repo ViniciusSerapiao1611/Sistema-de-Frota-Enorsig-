@@ -267,7 +267,9 @@ def listar_funcionarios():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
     
-    
+@app.route('/API/cadastrarkm')
+def cadastrokm():
+    #TODO criar rota
 # ROTAS DE ACESSO AS PÁGINAS #
 @app.route('/')
 def index():
