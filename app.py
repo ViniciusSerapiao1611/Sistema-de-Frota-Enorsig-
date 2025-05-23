@@ -271,6 +271,7 @@ def listar_funcionarios():
 def cadastrokm():
     #TODO criar rota para cadastro de KM
     #BLABLABLA
+    #NSANSNAS
 # ROTAS DE ACESSO AS PÁGINAS #
 @app.route('/')
 def index():
