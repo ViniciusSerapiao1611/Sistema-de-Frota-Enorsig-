@@ -32,16 +32,16 @@ def listar_bases():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT ID, Nome_Base, Estado, Cidade, Endereco, Status FROM dbo.tab_base")
+        cursor.execute("SELECT ID, NOME_BASE, ESTADO, CIDADE, ENDERECO, STATUS FROM dbo.tab_base")
         bases = []
         for row in cursor.fetchall():
             bases.append({
                 "id": row.ID,
-                "nome": row.Nome_Base,
-                "estado": row.Estado,
-                "cidade": row.Cidade,
-                "endereco": row.Endereco,  # <-- sem acento
-                "status": row.Status
+                "nome": row.NOME_BASE,
+                "estado": row.ESTADO,
+                "cidade": row.CIDADE,
+                "endereco": row.ENDERECO,  # <-- sem acento
+                "status": row.STATUS
             })
         conn.close()
         return jsonify(bases)
@@ -55,9 +55,9 @@ def adicionar_base():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO dbo.tab_base (Nome_Base, Estado, Cidade, Endereco, Status)
+            INSERT INTO dbo.tab_base (NOME_BASE, ESTADO, CIDADE, ENDERECO, STATUS)
             VALUES (?, ?, ?, ?, ?)
-        """,
+        """,    
         data['nome'],         # Nome_Base
         data['estado'],       # Estado
         data['cidade'],       # Cidade
@@ -93,15 +93,15 @@ def listar_centros_custo():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT ID, ID_CentroCusto, Nome, Responsavel, Status FROM dbo.tab_centrocusto")
+        cursor.execute("SELECT ID, ID_CENTRO_CUSTO, NOME, RESPONSAVEL, STATUS FROM dbo.tab_centrocusto")
         centros = []
         for row in cursor.fetchall():
             centros.append({
                 "id": row.ID,
-                "id_centro_custo": row.ID_CentroCusto,
-                "nome": row.Nome,
-                "responsavel": row.Responsavel,
-                "status": row.Status
+                "id_centro_custo": row.ID_CENTRO_CUSTO,
+                "nome": row.NOME,
+                "responsavel": row.RESPONSAVEL,
+                "status": row.STATUS
             })
         conn.close()
         return jsonify(centros)
@@ -115,7 +115,7 @@ def adicionar_centro_custo():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO dbo.tab_centrocusto (ID_CentroCusto, Nome, Responsavel, Status)
+            INSERT INTO dbo.tab_centrocusto (ID_CENTRO_CUSTO, NOME, RESPONSAVEL, STATUS)
             VALUES (?, ?, ?, ?)
         """, data['id_centro_custo'], data['nome'], data['responsavel'], data['status'])
         conn.commit()
@@ -133,23 +133,23 @@ def listar_veiculos():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT Marca, Modelo, Ano, Renavam, Placa, Tipo_combustivel, Hodometro_inicial, Motorista, Tipo_Locacao, Documento, Status
+            SELECT MARCA, MODELO, ANO, RENAVAM, PLACA, TIPO_COMBUSTIVEL, HODOMETRO_INICIAL, MOTORISTA, TIPO_LOCACAO, DOCUMENTO, STATUS
             FROM dbo.tab_veiculos
         """)
         veiculos = []
         for row in cursor.fetchall():
             veiculos.append({
-                "Marca": row.Marca,
-                "Modelo": row.Modelo,
-                "Ano": row.Ano,
-                "Renavam": row.Renavam,
-                "Placa": row.Placa,
-                "Tipo_combustivel": row.Tipo_combustivel,
-                "Hodometro_inicial": row.Hodometro_inicial,
-                "Motorista": row.Motorista,
-                "Tipo_Locacao": row.Tipo_Locacao,
-                "Documento": row.Documento,
-                "Status": row.Status
+                "Marca": row.MARCA,
+                "Modelo": row.MODELO,
+                "Ano": row.ANO,
+                "Renavam": row.RENAVAM,
+                "Placa": row.PLACA,
+                "Tipo_combustivel": row.TIPO_COMBUSTIVEL,
+                "Hodometro_inicial": row.HODOMETRO_INICIAL,
+                "Motorista": row.MOTORISTA,
+                "Tipo_Locacao": row.TIPO_LOCACAO,
+                "Documento": row.DOCUMENTO,
+                "Status": row.STATUS    
             })
         conn.close()
         return jsonify(veiculos)
@@ -165,7 +165,7 @@ def adicionar_veiculo():
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO dbo.tab_veiculos
-            (Marca, Modelo, Ano, Renavam, Placa, Tipo_combustivel, Hodometro_inicial, Motorista, Tipo_Locacao, Documento, Status)
+            (MARCA, MODELO, ANO, RENAVAM, PLACA, TIPO_COMBUSTIVEL, HODOMETRO_INICIAL, MOTORISTA, TIPO_LOCACAO, DOCUMENTO, STATUS)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         data['Marca'],
@@ -194,8 +194,8 @@ def atualizar_veiculo(placa):
         cursor = conn.cursor()
         cursor.execute("""
             UPDATE dbo.tab_veiculos
-            SET Marca = ?, Modelo = ?, Ano = ?, Renavam = ?, Tipo_combustivel = ?, Hodometro_inicial = ?, Motorista = ?, Tipo_Locacao = ?, Documento = ?, Status = ?
-            WHERE Placa = ?
+            SET MARCA = ?, MODELO = ?, ANO = ?, RENAVAM = ?, TIPO_COMBUSTIVEL = ?, HODOMETRO_INICIAL = ?, MOTORISTA = ?, TIPO_LOCACAO = ?, DOCUMENTO = ?, STATUS = ?
+            WHERE PLACA = ?
         """, data['Marca'], data['Modelo'], data['Ano'], data['Renavam'], data['Tipo_combustivel'], data['Hodometro_inicial'], data['Motorista'], data['Tipo_Locacao'], data['Documento'], data['Status'], placa)
         conn.commit()
         conn.close()
@@ -213,7 +213,7 @@ def adicionar_funcionario():
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO dbo.tab_funcionarios
-            (Nome, RG, CPF, CentroCusto, CNH, Categoria_CNH, Validade_CNH, Nivel_acesso, Data_nascimento, Placa, ID_Cartao, Email, Senha)
+            (NOME, RG, CPF, CENTRO_CUSTO, CNH, CATEGORIA_CNH, VALIDADE_CNH, NIVEL_ACESSO, DATA_NASCIMENTO, PLACA, ID_CARTAO, EMAIL, SENHA)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             data['Nome'],
@@ -242,36 +242,159 @@ def listar_funcionarios():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT CPF, RG, Nome, Data_nascimento, Nivel_acesso, CNH, Categoria_CNH, 
-                   Validade_CNH, Placa, CentroCusto, ID_Cartao, Status
+            SELECT CPF, RG, NOME, DATA_NASCIMENTO, NIVEL_ACESSO, CNH, CATEGORIA_CNH, 
+                   VALIDADE_CNH, PLACA, CENTRO_CUSTO, ID_CARTAO, STATUS
             FROM dbo.tab_funcionarios
+            --WHERE PLACA IS NULL
         """)
         funcionarios = []
         for row in cursor.fetchall():
             funcionarios.append({
-                "cpf": row.CPF,
-                "rg": row.RG,
-                "nome": row.Nome,
-                "data_nascimento": row.Data_nascimento,
-                "nivel_acesso": row.Nivel_acesso,
-                "cnh": row.CNH,
-                "categoria_cnh": row.Categoria_CNH,
-                "validade_cnh": row.Validade_CNH,
-                "placa": row.Placa,
-                "centro_custo": row.CentroCusto,
-                "cartao": row.ID_Cartao,
-                "status": row.Status
+                "cpf": row[0],
+                "rg": row[1],
+                "nome": row[2],
+                "data_nascimento": row[3],
+                "nivel_acesso": row[4],
+                "cnh": row[5],
+                "categoria_cnh": row[6],
+                "validade_cnh": row[7],
+                "placa": row[8],
+                "centro_custo": row[9],
+                "cartao": row[10],
+                "status": row[11]
             })
         conn.close()
         return jsonify(funcionarios)
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
     
-@app.route('/API/cadastrarkm')
-def cadastrokm():
-    #TODO criar rota para cadastro de KM
-    #BLABLABLA
-    #NSANSNAS
+@app.route('/api/envio_km', methods=['POST'])
+def cadastrarkm():
+    data = request.get_json()
+    print(f"Dados recebidos: {data}")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT CENTRO_CUSTO, NOME, PLACA, ID_CARTAO FROM tab_funcionarios WHERE ID = ?", (session['user_id'],))
+        resultado = cursor.fetchone()
+        centrocusto = resultado[0]
+        nome = resultado[1]
+        placa = resultado[2]
+        id_cartao = resultado[3]
+        base = centrocusto
+        
+        cursor.execute("""
+            SELECT TOP 1 HODOMETRO
+            FROM tab_abastecimento
+            WHERE PLACA = ?
+            ORDER BY DATA DESC, ID DESC
+        """, (placa,))
+        ultimo_hodometro = cursor.fetchone()
+        if ultimo_hodometro and data['hodometroSaida'] < ultimo_hodometro[0]:
+            return jsonify({"status": "erro", "mensagem": f"Hodômetro atual menor que o último registro: {ultimo_hodometro[0]}."}), 400
+        cursor.execute("""
+                    INSERT INTO tab_relatorio(
+                    CENTRO_CUSTO,
+                    DATA,
+                    NOME,
+                    PLACA,
+                    BASE,
+                    HODOMETRO_INICIAL,
+                    HODOMETRO_FINAL,
+                    TOTAL,
+                    ID_CARTAO,
+                    LOCAL_INICIAL,
+                    LOCAL_FINAL
+                    )VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (centrocusto,
+                            data['data'],
+                            nome, 
+                            placa,
+                            base,
+                            data['hodometroSaida'],
+                            data['hodometroRetorno'],
+                            data['kmRodada'],
+                            id_cartao,
+                            data['localSaida'],
+                            data['localRetorno']))
+        conn.commit()
+        return jsonify({"status": "ok", "mensagem": "Dados inseridos com sucesso"})
+    except Exception as e:
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
+
+@app.route('/api/envio_abastecimento', methods=['POST'])
+def cadastrodeabastecimento():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        hodometro = request.form.get('hodometro')
+        combustivel = request.form.get('combustivel')
+        litros = request.form.get('litros')
+        valor_unitario = request.form.get('valor_unitario')
+        valor_total = request.form.get('valor_total')
+        comprovante = request.files.get('comprovante')
+
+
+
+        cursor.execute("SELECT ID_CARTAO, NOME, PLACA FROM tab_funcionarios WHERE ID = ?", (session['user_id'],))
+        dados = cursor.fetchone()
+        if not dados:
+            return jsonify({"status": "erro", "mensagem": "Cartão não encontrado para o usuário"}), 400
+        id_cartao = dados[0]
+        nome = dados[1]
+        placa = dados[2]
+
+        comprovante_bytes = comprovante.read() if comprovante else None
+
+        cursor.execute("""
+            SELECT TOP 1 HODOMETRO
+            FROM tab_abastecimento
+            WHERE PLACA = ?
+            ORDER BY DATA DESC, ID DESC
+        """, (placa,))
+        ultimo_hodometro = cursor.fetchone()
+        if ultimo_hodometro and hodometro < ultimo_hodometro[0]:
+            return jsonify({"status": "erro", "mensagem": f"Hodômetro atual menor que o último registro: {ultimo_hodometro[0]}."}), 400
+
+        
+
+
+        cursor.execute("""
+            INSERT INTO tab_abastecimento(
+                DATA,
+                CONDUTOR,
+                HODOMETRO,
+                PLACA,
+                COMBUSTIVEL,
+                LITROS,
+                VALOR_UN,
+                VALOR_ABASTECIMENTO,
+                COMPROVANTE,
+                ID_CARTAO
+            ) VALUES (
+                GETDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+        """, (
+            nome,
+            hodometro,
+            placa,
+            combustivel,
+            litros,
+            valor_unitario,
+            valor_total,
+            comprovante_bytes,
+            id_cartao
+        ))
+
+        conn.commit()
+        return jsonify({"status": "ok", "mensagem": "Dados inseridos com sucesso"})
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
+
 # ROTAS DE ACESSO AS PÁGINAS #
 @app.route('/')
 def index():
@@ -290,6 +413,15 @@ def index():
 """)
     total_abastecimento = cursor.fetchone()[0] or 0
     return render_template('home.html', total_veiculos=total_veiculos, total_veiculos_inativos=total_veiculos_inativos, total_abastecimento=total_abastecimento)
+
+@app.route('/editarviagem')
+def editarviagem():
+    #TODO carregar os dados de edição conforme usuário que fez login
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    cursor.execute()
+    return render_template('editar_viagem.html')
+
 
 @app.route('/login' , methods=['GET', 'POST'])
 def login():
@@ -325,17 +457,68 @@ def login():
 
 @app.route('/cadastroabastecimento')
 def cadastroabastecimento():
+    #TODO carregar os dados de edição conforme usuário que fez login
+    # Verifica se o usuário está logado
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Verifica se o usuário tem acesso de motorista
+    if session.get('acesso') == 'Motorista':
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT Placa FROM dbo.tab_funcionarios WHERE ID = ?", session['user_id'])
+        placa = cursor.fetchone()[0]
+        cursor.execute("SELECT NUMERO_CARTAO, VALIDADE_CARTAO FROM dbo.tab_cartao WHERE PLACA_CARTAO = ?", placa)
+        dados = cursor.fetchone()
+        id_cartao = dados[0]
+        validade_cartao = dados[1]
+        cursor.execute("SELECT DATA, VALOR_ABASTECIMENTO FROM dbo.tab_abastecimento WHERE ID_CARTAO = ?", placa)
+        abastecimentos = cursor.fetchall()
+        if not abastecimentos:
+            return render_template('cadastro_abastecimento.html', id_cartao=id_cartao, placa=placa, validade_cartao=validade_cartao)
+
+
+        abastecimentos = [{'data': ab[0], 'valor': ab[1]} for ab in abastecimentos]
+        conn.commit()
+        conn.close()
+
+        return render_template('cadastro_abastecimento.html', id_cartao=id_cartao, placa=placa, validade_cartao=validade_cartao, abastecimentos=abastecimentos)
+
     return render_template('cadastro_abastecimento.html')
 
 @app.route('/cadastrokm')
 def cadastrokm():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     return render_template('cadastro_km.html')
 
 @app.route('/relatorios')
 def relatorios():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('relatorios.html')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT CENTRO_CUSTO, DATA, NOME, PLACA, BASE, HODOMETRO_INICIAL, HODOMETRO_FINAL, TOTAL, ID_CARTAO, LOCAL_INICIAL, LOCAL_FINAL FROM tab_relatorio")
+    relatorios = []
+    for row in cursor.fetchall():
+        relatorios.append({
+            'centrocusto' : row[0],
+            'data' : row[1],
+            'nome' : row[2],
+            'placa' : row[3],
+            'base' : row[4],
+            'hodometro_inicial': row[5],
+            'hodometro_final' : row[6],
+            'total' : row[7],
+            'id_cartao':row[8],
+            'local_inicial': row[9],
+            'local_final' :row[10]
+
+        })
+    return render_template('relatorios.html', relatorios=relatorios)
 
 @app.route('/veiculos')
 def veiculos():
@@ -461,4 +644,4 @@ def veiculossecundaria():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)

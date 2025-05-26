@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,11 @@
     <link rel="stylesheet" href="css/cadastro_km.css">
     <link rel="stylesheet" href="css/cartao.css">
     <link rel="stylesheet" href="css/tabela_viagens.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro_km.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cartao.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tabela_viagens.css') }}">
 </head>
+
 <body>
     <div class="top-bar">
         <div class="top-bar-inner">
@@ -27,25 +32,23 @@
     <!-- Filtros acima da tabela -->
     <div style="padding: 12px 8px 0 8px;">
         <form id="filtros-viagens" style="display:flex;gap:8px;flex-wrap:wrap;">
-            <input
-                type="date"
-                id="filtro-data"
-                name="data"
+            <input type="date" id="filtro-data" name="data"
                 style="flex:1 1 120px;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;"
-                placeholder="Data"
-                aria-label="Data da viagem"
-                title="Data da viagem"
-            />
-            <button type="button" onclick="filtrarViagens()" title="Filtrar" style="padding:8px 10px;background:#e3f0fb;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                <svg width="20" height="20" fill="none" stroke="#1976d2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"/>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                placeholder="Data" aria-label="Data da viagem" title="Data da viagem" />
+            <button type="button" onclick="filtrarViagens()" title="Filtrar"
+                style="padding:8px 10px;background:#e3f0fb;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <svg width="20" height="20" fill="none" stroke="#1976d2" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
             </button>
-            <button type="button" onclick="limparFiltros()" title="Limpar" style="padding:8px 10px;background:#f6f6f8;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                <svg width="20" height="20" fill="none" stroke="#a60000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
+            <button type="button" onclick="limparFiltros()" title="Limpar"
+                style="padding:8px 10px;background:#f6f6f8;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <svg width="20" height="20" fill="none" stroke="#a60000" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
             </button>
         </form>
@@ -65,21 +68,186 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>28/04/2025</td><td>12000</td><td>12120</td><td>120</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>27/04/2025</td><td>11902</td><td>12000</td><td>98</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>26/04/2025</td><td>11792</td><td>11890</td><td>98</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>25/04/2025</td><td>11650</td><td>11792</td><td>142</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>24/04/2025</td><td>11500</td><td>11650</td><td>150</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>23/04/2025</td><td>11380</td><td>11500</td><td>120</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>22/04/2025</td><td>11200</td><td>11380</td><td>180</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>21/04/2025</td><td>11050</td><td>11200</td><td>150</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>20/04/2025</td><td>10900</td><td>11050</td><td>150</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>19/04/2025</td><td>10750</td><td>10900</td><td>150</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>23/04/2025</td><td>11380</td><td>11500</td><td>120</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>22/04/2025</td><td>11200</td><td>11380</td><td>180</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>21/04/2025</td><td>11050</td><td>11200</td><td>150</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>20/04/2025</td><td>10900</td><td>11050</td><td>150</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
-                    <tr><td>19/04/2025</td><td>10750</td><td>10900</td><td>150</td><td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z"/></svg></button></td></tr>
+                    <tr>
+                        <td>28/04/2025</td>
+                        <td>12000</td>
+                        <td>12120</td>
+                        <td>120</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>27/04/2025</td>
+                        <td>11902</td>
+                        <td>12000</td>
+                        <td>98</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>26/04/2025</td>
+                        <td>11792</td>
+                        <td>11890</td>
+                        <td>98</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>25/04/2025</td>
+                        <td>11650</td>
+                        <td>11792</td>
+                        <td>142</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>24/04/2025</td>
+                        <td>11500</td>
+                        <td>11650</td>
+                        <td>150</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>23/04/2025</td>
+                        <td>11380</td>
+                        <td>11500</td>
+                        <td>120</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>22/04/2025</td>
+                        <td>11200</td>
+                        <td>11380</td>
+                        <td>180</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>21/04/2025</td>
+                        <td>11050</td>
+                        <td>11200</td>
+                        <td>150</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>20/04/2025</td>
+                        <td>10900</td>
+                        <td>11050</td>
+                        <td>150</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>19/04/2025</td>
+                        <td>10750</td>
+                        <td>10900</td>
+                        <td>150</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>23/04/2025</td>
+                        <td>11380</td>
+                        <td>11500</td>
+                        <td>120</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>22/04/2025</td>
+                        <td>11200</td>
+                        <td>11380</td>
+                        <td>180</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>21/04/2025</td>
+                        <td>11050</td>
+                        <td>11200</td>
+                        <td>150</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>20/04/2025</td>
+                        <td>10900</td>
+                        <td>11050</td>
+                        <td>150</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
+                    <tr>
+                        <td>19/04/2025</td>
+                        <td>10750</td>
+                        <td>10900</td>
+                        <td>150</td>
+                        <td><button class="btn-editar" title="Editar"><svg width="18" height="18" fill="none"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 0 0 .707-.293l9.414-9.414a2 2 0 0 0 0-2.828l-3.172-3.172a2 2 0 0 0-2.828 0L4.293 13.293A1 1 0 0 0 4 14v4a2 2 0 0 0 2 2z" />
+                                </svg></button></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -102,14 +270,17 @@
             transition:opacity 0.2s;
             padding:0;
         ">
-            <svg width="26" height="26" fill="none" stroke="#4b1e8a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="display:block;margin:auto;">
-                <polyline points="18 15 12 9 6 15"/>
+            <svg width="26" height="26" fill="none" stroke="#4b1e8a" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round" viewBox="0 0 24 24" style="display:block;margin:auto;">
+                <polyline points="18 15 12 9 6 15" />
             </svg>
         </button>
     </div>
 
     <!-- Modal de edição de viagem (abre de baixo para cima) -->
-    <div id="modal-editar-bg" style="display:none;position:fixed;left:0;bottom:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);z-index:2000;"></div>
+    <div id="modal-editar-bg"
+        style="display:none;position:fixed;left:0;bottom:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);z-index:2000;">
+    </div>
     <div id="modal-editar" style="
         display:none;
         position:fixed;
@@ -129,28 +300,34 @@
         <form id="form-editar-viagem" style="padding:24px 20px 20px 20px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
                 <span style="font-weight:bold;font-size:1.15rem;">Editar viagem</span>
-                <button type="button" id="fechar-modal-editar" style="background:none;border:none;font-size:2rem;line-height:1;cursor:pointer;">&times;</button>
+                <button type="button" id="fechar-modal-editar"
+                    style="background:none;border:none;font-size:2rem;line-height:1;cursor:pointer;">&times;</button>
             </div>
             <div style="display:flex;flex-direction:column;gap:14px;">
                 <label>
                     Data
-                    <input type="date" id="modal-data" name="data" required style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
+                    <input type="date" id="modal-data" name="data" required
+                        style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
                 </label>
                 <label>
                     Local de saída
-                    <input type="text" id="modal-local-saida" name="localSaida" placeholder="Ex: Empresa" style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
+                    <input type="text" id="modal-local-saida" name="localSaida" placeholder="Ex: Empresa"
+                        style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
                 </label>
                 <label>
                     Hodômetro saída
-                    <input type="number" id="modal-hod-saida" name="hodSaida" required style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
+                    <input type="number" id="modal-hod-saida" name="hodSaida" required
+                        style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
                 </label>
                 <label>
                     Local de retorno
-                    <input type="text" id="modal-local-retorno" name="localRetorno" placeholder="Ex: Empresa" style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
+                    <input type="text" id="modal-local-retorno" name="localRetorno" placeholder="Ex: Empresa"
+                        style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
                 </label>
                 <label>
                     Hodômetro retorno
-                    <input type="number" id="modal-hod-retorno" name="hodRetorno" required style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
+                    <input type="number" id="modal-hod-retorno" name="hodRetorno" required
+                        style="width:100%;padding:8px 10px;border:1px solid #e0e0e0;border-radius:8px;font-size:1rem;">
                 </label>
                 <label style="display:flex;align-items:center;gap:8px;">
                     <input type="checkbox" id="modal-pedagio" name="pedagio">
@@ -158,14 +335,18 @@
                 </label>
             </div>
             <div style="margin-top:22px;display:flex;gap:12px;">
-                <button type="submit" style="flex:1;padding:10px 0;background:#a60000;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;">Salvar</button>
-                <button type="button" id="cancelar-modal-editar" style="flex:1;padding:10px 0;background:#f6f6f8;color:#333;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;">Cancelar</button>
+                <button type="submit"
+                    style="flex:1;padding:10px 0;background:#a60000;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;">Salvar</button>
+                <button type="button" id="cancelar-modal-editar"
+                    style="flex:1;padding:10px 0;background:#f6f6f8;color:#333;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;">Cancelar</button>
             </div>
         </form>
     </div>
 
     <!-- Menu lateral modal -->
-    <div id="side-modal-bg" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);z-index:1000;"></div>
+    <div id="side-modal-bg"
+        style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);z-index:1000;">
+    </div>
     <div id="side-modal" style="
         display:none;
         position:fixed;
@@ -184,59 +365,75 @@
     ">
         <div style="padding:24px 20px 20px 24px;display:flex;justify-content:space-between;align-items:center;">
             <span style="font-weight:bold;font-size:1.15rem;">Menu</span>
-            <button id="close-side-modal" style="background:none;border:none;font-size:2rem;line-height:1;cursor:pointer;">&times;</button>
+            <button id="close-side-modal"
+                style="background:none;border:none;font-size:2rem;line-height:1;cursor:pointer;">&times;</button>
         </div>
         <div style="padding:0 24px 24px 24px;">
-            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="window.location.href='cadastro_km.html'">
+            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;"
+                onclick="window.location.href='{{url_for('cadastrokm')}}'">
                 <!-- Ícone lápis -->
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15.5 3.5L18.5 6.5M2 20L6.5 19L18 7.5C18.3315 7.16848 18.3315 6.63152 18 6.3L15.7 4C15.3685 3.66848 14.8315 3.66848 14.5 4L3 15.5L2 20Z" stroke="#4b1e8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path
+                        d="M15.5 3.5L18.5 6.5M2 20L6.5 19L18 7.5C18.3315 7.16848 18.3315 6.63152 18 6.3L15.7 4C15.3685 3.66848 14.8315 3.66848 14.5 4L3 15.5L2 20Z"
+                        stroke="#4b1e8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 Quilometragem
             </div>
-            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="window.location.href='cadastro_abastecimento.html'">
+            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;"
+                onclick="window.location.href='{{url_for('cadastroabastecimento')}}'">
                 <!-- Ícone combustível -->
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="4" y="3" width="10" height="16" rx="2" stroke="#a60000" stroke-width="1.5"/>
-                    <path d="M14 6L18 10V17C18 18.1046 17.1046 19 16 19H14" stroke="#a60000" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M8 7H10" stroke="#a60000" stroke-width="1.5" stroke-linecap="round"/>
+                    <rect x="4" y="3" width="10" height="16" rx="2" stroke="#a60000" stroke-width="1.5" />
+                    <path d="M14 6L18 10V17C18 18.1046 17.1046 19 16 19H14" stroke="#a60000" stroke-width="1.5"
+                        stroke-linecap="round" />
+                    <path d="M8 7H10" stroke="#a60000" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
                 Abastecimento
             </div>
-            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="window.location.href='editar_viagem.html'">
+            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;"
+                onclick="window.location.href='{{url_for('editarviagem')}}'">
                 <!-- Ícone ajuste (engrenagem) -->
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11" cy="11" r="4" stroke="#888" stroke-width="1.5"/>
-                    <path d="M2 11h2M18 11h2M11 2v2M11 18v2M4.93 4.93l1.42 1.42M15.66 15.66l1.41 1.41M4.93 17.07l1.42-1.42M15.66 6.34l1.41-1.41" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+                    <circle cx="11" cy="11" r="4" stroke="#888" stroke-width="1.5" />
+                    <path
+                        d="M2 11h2M18 11h2M11 2v2M11 18v2M4.93 4.93l1.42 1.42M15.66 15.66l1.41 1.41M4.93 17.07l1.42-1.42M15.66 6.34l1.41-1.41"
+                        stroke="#888" stroke-width="1.2" stroke-linecap="round" />
                 </svg>
                 Editar Viagens
             </div>
-            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;" onclick="window.location.href='Frota.index.html'">
+            <div style="margin-bottom:18px;cursor:pointer;display:flex;align-items:center;gap:12px;"
+                onclick="window.location.href='{{url_for('index')}}'">
                 <!-- Ícone sair (porta com seta) -->
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 16L17 12L13 8" stroke="#a60000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M17 12H7" stroke="#a60000" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M5 4V18" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+                    <path d="M13 16L17 12L13 8" stroke="#a60000" stroke-width="1.5" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M17 12H7" stroke="#a60000" stroke-width="1.5" stroke-linecap="round" />
+                    <path d="M5 4V18" stroke="#888" stroke-width="1.2" stroke-linecap="round" />
                 </svg>
                 Sair
             </div>
         </div>
     </div>
     <div class="bottom-nav">
-        <div class="nav-item" onclick="window.location.href='cadastro_km.html'">
+        <div class="nav-item" onclick="window.location.href='{{url_for('cadastrokm')}}'">
             <span class="icon">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15.5 3.5L18.5 6.5M2 20L6.5 19L18 7.5C18.3315 7.16848 18.3315 6.63152 18 6.3L15.7 4C15.3685 3.66848 14.8315 3.66848 14.5 4L3 15.5L2 20Z" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style="vertical-align: middle;"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M15.5 3.5L18.5 6.5M2 20L6.5 19L18 7.5C18.3315 7.16848 18.3315 6.63152 18 6.3L15.7 4C15.3685 3.66848 14.8315 3.66848 14.5 4L3 15.5L2 20Z"
+                        stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </span>
             KM
         </div>
-        <div class="nav-item" onclick="window.location.href='cadastro_abastecimento.html'">
+        <div class="nav-item" onclick="window.location.href='{{url_for('cadastroabastecimento')}}'">
             <span class="icon">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="4" y="3" width="10" height="16" rx="2" stroke="#a60000" stroke-width="1.5"/>
-                    <path d="M14 6L18 10V17C18 18.1046 17.1046 19 16 19H14" stroke="#a60000" stroke-width="1.5" stroke-linecap="round"/>
-                    <path d="M8 7H10" stroke="#a60000" stroke-width="1.5" stroke-linecap="round"/>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style="vertical-align: middle;"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="3" width="10" height="16" rx="2" stroke="#a60000" stroke-width="1.5" />
+                    <path d="M14 6L18 10V17C18 18.1046 17.1046 19 16 19H14" stroke="#a60000" stroke-width="1.5"
+                        stroke-linecap="round" />
+                    <path d="M8 7H10" stroke="#a60000" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
             </span>
             Combustível
@@ -286,7 +483,7 @@
         const tabelaScroll = document.getElementById('tabela-scroll');
         const btnTopoTabela = document.getElementById('btn-topo-tabela');
 
-        tabelaScroll.addEventListener('scroll', function() {
+        tabelaScroll.addEventListener('scroll', function () {
             if (tabelaScroll.scrollTop > 80) {
                 btnTopoTabela.style.display = 'flex';
                 btnTopoTabela.style.opacity = '1';
@@ -298,7 +495,7 @@
             }
         });
 
-        btnTopoTabela.onclick = function() {
+        btnTopoTabela.onclick = function () {
             tabelaScroll.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
@@ -341,7 +538,7 @@
 
         // Adiciona evento aos botões de editar da tabela
         document.querySelectorAll('.btn-editar').forEach(btn => {
-            btn.onclick = function() {
+            btn.onclick = function () {
                 const tr = btn.closest('tr');
                 const tds = tr.querySelectorAll('td');
                 // Exemplo: você pode adaptar para buscar os dados reais
@@ -350,7 +547,7 @@
                     dataISO: (() => {
                         // Converte dd/mm/yyyy para yyyy-mm-dd
                         const partes = tds[0].textContent.trim().split('/');
-                        return partes.length === 3 ? `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}` : '';
+                        return partes.length === 3 ? `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}` : '';
                     })(),
                     localSaida: '', // Preencher se houver coluna
                     hodSaida: tds[1].textContent.trim(),
@@ -363,7 +560,7 @@
         });
 
         // Salvar edição (exemplo: apenas atualiza a linha da tabela)
-        document.getElementById('form-editar-viagem').onsubmit = function(e) {
+        document.getElementById('form-editar-viagem').onsubmit = function (e) {
             e.preventDefault();
             if (!linhaEditando) return;
             const data = document.getElementById('modal-data').value;
@@ -383,4 +580,5 @@
         };
     </script>
 </body>
+
 </html>
