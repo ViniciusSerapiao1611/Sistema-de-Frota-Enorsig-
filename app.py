@@ -315,7 +315,7 @@ def listar_funcionarios():
         cursor = conn.cursor()
         cursor.execute("""
             SELECT CPF, RG, NOME, DATA_NASCIMENTO, NIVEL_ACESSO, CNH, CATEGORIA_CNH, 
-                   VALIDADE_CNH, PLACA, CENTRO_CUSTO, ID_CARTAO, STATUS
+                   VALIDADE_CNH, PLACA, CENTRO_CUSTO, ID_CARTAO, STATUS, EMAIL, SENHA, TELEFONE
             FROM dbo.tab_funcionarios
             --WHERE PLACA IS NULL
         """)
@@ -333,7 +333,10 @@ def listar_funcionarios():
                 "placa": row[8],
                 "centro_custo": row[9],
                 "cartao": row[10],
-                "status": row[11]
+                "status": row[11],
+                "email": row[12],
+                "senha":row[13],
+                "telefone":row[14]
             })
         conn.close()
         return jsonify(funcionarios)
@@ -341,7 +344,7 @@ def listar_funcionarios():
         return jsonify({"erro": str(e)}), 500
     
 
-@app.route('/api/funcionarios/<cpf>', methods=['PUT'])
+@app.route('/api/funcionarios/<cpf>', methods=['POST'])
 def atualizar_funcionario(cpf):
     try:
         data = request.get_json()

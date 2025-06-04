@@ -346,7 +346,7 @@
 
     // Função para carregar a tabela com os dados filtrados
     function carregarTabela(filtros = {}) {
-        fetch('http://127.0.0.1:5000/api/funcionarios')  // Buscar dados da API
+        fetch('/api/funcionarios')  // Buscar dados da API
             .then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector(".tabela-usuarios tbody");
@@ -379,7 +379,7 @@ linha.innerHTML = `
     <td>${funcionario.cartao || ""}</td>
     <td class="acoes">
         <!-- Removido o botão de inativar/ativar, deixando apenas o de editar -->
-        <button class="btn editar" title="Editar" data-id="${funcionario.cpf}"><i class="fas fa-edit"></i></button>
+        <button class="btn editar" title="Editar" data-id="${funcionario.cpf}", ><i class="fas fa-edit"></i></button>
     </td>
 `;
                     tbody.appendChild(linha);
@@ -431,16 +431,25 @@ linha.innerHTML = `
 
     // Função para editar usuário
     function editarUsuario(id) {
-        fetch('http://127.0.0.1:5000/api/funcionarios')  // Buscar dados da API
+        fetch('/api/funcionarios')  // Buscar dados da API
         .then(response => response.json())
         .then(data => {
             const usuario = data.find(funcionario => funcionario.cpf === id);  // Usando o id para buscar o funcionário
 
             // Preencher todos os campos do modal
+            function formatarDataParaInput(dateString) {
+              if (!dateString) return "";
+              const date = new Date(dateString);
+              if (isNaN(date.getTime())) return ""; // data inválida
+              const ano = date.getFullYear();
+              const mes = String(date.getMonth() + 1).padStart(2, '0');
+              const dia = String(date.getDate()).padStart(2, '0');
+              return `${ano}-${mes}-${dia}`;
+            }
             document.getElementById("cpf-editar").value = usuario.cpf || "";
             document.getElementById("rg-editar").value = usuario.rg || "";
             document.getElementById("nome-editar").value = usuario.nome || "";
-            document.getElementById("data-nascimento-editar").value = usuario.data_nascimento || "";
+            document.getElementById("data-nascimento-editar").value = formatarDataParaInput(usuario.data_nascimento) || "";
             document.getElementById("permissao-acesso").value = usuario.nivel_acesso || "";
             document.getElementById("email-editar").value = usuario.email || "";
             document.getElementById("telefone-editar").value = usuario.telefone || "";
@@ -477,7 +486,7 @@ linha.innerHTML = `
                     usuario.status = document.getElementById("status-selecionado").value;
 
                     fetch('/api/funcionarios', {
-                        method: 'PUT', // Pode ser um PUT, dependendo da API
+                        method: 'POST', // Pode ser um PUT, dependendo da API
                         body: JSON.stringify(usuario),
                         headers: {
                             'Content-Type': 'application/json',
@@ -496,7 +505,7 @@ linha.innerHTML = `
     // Função de inativar/ativar
     function atualizarStatus(id, novoStatus) {
         fetch(`/api/funcionarios/${id}`, {
-        method: 'PUT',  // Usando PUT ou PATCH para atualizar o status
+        method: 'POST',  // Usando PUT ou PATCH para atualizar o status
         body: JSON.stringify({ status: novoStatus }),
         headers: {
                  'Content-Type': 'application/json',
@@ -538,8 +547,8 @@ linha.innerHTML = `
         senha: document.getElementById('Senha-editar').value
     };
 
-    fetch(`http://127.0.0.1:5000/api/funcionarios/${cpf}`, {
-        method: 'PUT',
+    fetch(`/api/funcionarios/${cpf}`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(funcionarioEditado)
     })
