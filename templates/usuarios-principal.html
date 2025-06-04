@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -305,7 +305,7 @@
             </div>
             <div class="form-actions">
                 <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-                <button type="button" class="btn-salvar" onclick="salvarEdicaoFuncionario()">Salvar</button>
+                <button type="button" class="btn-salvar" >Salvar</button>
             </div>
         </div>
     </div>
@@ -429,15 +429,7 @@ linha.innerHTML = `
         localStorage.setItem("dark-mode", isDarkMode);
     }
 
-    // Função para editar usuário
-    function editarUsuario(id) {
-        fetch('/api/funcionarios')  // Buscar dados da API
-        .then(response => response.json())
-        .then(data => {
-            const usuario = data.find(funcionario => funcionario.cpf === id);  // Usando o id para buscar o funcionário
-
-            // Preencher todos os campos do modal
-            function formatarDataParaInput(dateString) {
+    function formatarDataParaInput(dateString) {
               if (!dateString) return "";
 
               // cria Date pelo construtor, que entende string tipo "Sun, 17 Nov 2002 00:00:00 GMT"
@@ -454,6 +446,15 @@ linha.innerHTML = `
 
               return `${ano}-${mes}-${dia}`;
             }
+    // Função para editar usuário
+    function editarUsuario(id) {
+        fetch('/api/funcionarios')  // Buscar dados da API
+        .then(response => response.json())
+        .then(data => {
+            const usuario = data.find(funcionario => funcionario.cpf === id);  // Usando o id para buscar o funcionário
+
+            // Preencher todos os campos do modal
+
 
 
             document.getElementById("cpf-editar").value = usuario.cpf || "";
@@ -466,7 +467,7 @@ linha.innerHTML = `
             document.getElementById("Senha-editar").value = usuario.senha || "";
             document.getElementById("cnh-numero-editar").value = usuario.cnh || "";
             document.getElementById("cnh-categoria-editar").value = usuario.categoria_cnh || "";
-            document.getElementById("cnh-validade-editar").value = usuario.validade_cnh || "";
+            document.getElementById("cnh-validade-editar").value = formatarDataParaInput(usuario.validade_cnh) || "";
             document.getElementById("veiculo-editar").value = usuario.placa || "";
             document.getElementById("centro-custo-editar").value = usuario.centro_custo || "";
             document.getElementById("placa-cartão-editar").value = usuario.cartao || "";
@@ -581,14 +582,19 @@ linha.innerHTML = `
     };
 
     function formatarDataBrasileira(dataISO) {
-        if (!dataISO) return "";
-        // Aceita tanto "2025-12-31" quanto "2025-12-31T00:00:00"
-        const data = new Date(dataISO);
-        if (isNaN(data)) return dataISO; // Se não for data válida, retorna original
-        const dia = String(data.getDate()).padStart(2, '0');
-        const mes = String(data.getMonth() + 1).padStart(2, '0');
-        const ano = data.getFullYear();
-        return `${dia}/${mes}/${ano}`;
+      if (!dataISO) return "";
+
+      const dataUTC = new Date(dataISO);
+      if (isNaN(dataUTC.getTime())) return dataISO; // Se inválida, retorna original
+
+      const offsetMs = dataUTC.getTimezoneOffset() * 60 * 1000;
+      const dataLocal = new Date(dataUTC.getTime() + offsetMs);
+
+      const dia = String(dataLocal.getDate()).padStart(2, '0');
+      const mes = String(dataLocal.getMonth() + 1).padStart(2, '0');
+      const ano = dataLocal.getFullYear();
+
+      return `${dia}/${mes}/${ano}`;
     }
 
     // Botão "voltar ao topo"

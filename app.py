@@ -352,7 +352,6 @@ def atualizar_funcionario(cpf):
         data = request.get_json()
         conn = get_db_connection()
         cursor = conn.cursor()
-        print("Recebido para atualizar:", data)
         senha_hash = generate_password_hash(data['senha'])
 
         cursor.execute("""
