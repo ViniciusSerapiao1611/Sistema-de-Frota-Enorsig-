@@ -278,6 +278,8 @@ def adicionar_funcionario():
     try:
         data = request.get_json()
         conn = get_db_connection()
+        print("pq isso aqui estaria dando erro?\n\n")
+        print(data['SENHA'])
         senha_hash = generate_password_hash(data['SENHA'])
         cursor = conn.cursor()
         cursor.execute("""
@@ -344,13 +346,15 @@ def listar_funcionarios():
         return jsonify({"erro": str(e)}), 500
     
 
-@app.route('/api/funcionarios/<cpf>', methods=['POST'])
+@app.route('/api/funcionarios/atualizar/<cpf>', methods=['POST'])
 def atualizar_funcionario(cpf):
     try:
         data = request.get_json()
         conn = get_db_connection()
         cursor = conn.cursor()
+        print("Recebido para atualizar:", data)
         senha_hash = generate_password_hash(data['senha'])
+
         cursor.execute("""
             UPDATE dbo.tab_funcionarios
             SET NOME = ?, RG = ?, CENTRO_CUSTO = ?, CNH = ?, CATEGORIA_CNH = ?, VALIDADE_CNH = ?, NIVEL_ACESSO = ?, DATA_NASCIMENTO = ?, PLACA = ?, ID_CARTAO = ?, EMAIL = ?, SENHA = ?, TELEFONE = ?

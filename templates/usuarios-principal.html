@@ -439,13 +439,23 @@ linha.innerHTML = `
             // Preencher todos os campos do modal
             function formatarDataParaInput(dateString) {
               if (!dateString) return "";
-              const date = new Date(dateString);
-              if (isNaN(date.getTime())) return ""; // data inválida
-              const ano = date.getFullYear();
-              const mes = String(date.getMonth() + 1).padStart(2, '0');
-              const dia = String(date.getDate()).padStart(2, '0');
+
+              // cria Date pelo construtor, que entende string tipo "Sun, 17 Nov 2002 00:00:00 GMT"
+              const dateUtc = new Date(dateString);
+              if (isNaN(dateUtc.getTime())) return "";
+
+              // ajusta para horário local adicionando deslocamento
+              const offsetMs = dateUtc.getTimezoneOffset() * 60 * 1000; // em ms
+
+              const dateLocal = new Date(dateUtc.getTime() + offsetMs);
+              const ano = dateLocal.getFullYear();
+              const mes = String(dateLocal.getMonth() + 1).padStart(2, '0');
+              const dia = String(dateLocal.getDate()).padStart(2, '0');
+
               return `${ano}-${mes}-${dia}`;
             }
+
+
             document.getElementById("cpf-editar").value = usuario.cpf || "";
             document.getElementById("rg-editar").value = usuario.rg || "";
             document.getElementById("nome-editar").value = usuario.nome || "";
@@ -468,6 +478,7 @@ linha.innerHTML = `
                 btnSalvar.parentNode.replaceChild(novoBtnSalvar, btnSalvar);
 
                 novoBtnSalvar.addEventListener("click", function (event) {
+
                     event.preventDefault();  // Impede o submit padrão do formulário
                     usuario.cpf = document.getElementById("cpf-editar").value;
                     usuario.rg = document.getElementById("rg-editar").value;
@@ -485,11 +496,11 @@ linha.innerHTML = `
                     usuario.cartao = document.getElementById("placa-cartão-editar").value;
                     usuario.status = document.getElementById("status-selecionado").value;
 
-                    fetch('/api/funcionarios', {
-                        method: 'POST', // Pode ser um PUT, dependendo da API
+                    fetch(`/api/funcionarios/atualizar/${usuario.cpf}`, { //linha 488
+                       method: 'POST', // Pode ser um PUT, dependendo da API
                         body: JSON.stringify(usuario),
-                        headers: {
-                            'Content-Type': 'application/json',
+                       headers: {
+                           'Content-Type': 'application/json',
                         }
                     })
                     .then(response => response.json())
@@ -497,10 +508,9 @@ linha.innerHTML = `
                         carregarTabela();
                         fecharModal();
                     })
-                    .catch(error => console.error('Erro ao salvar as alterações:', error));
+                    .catch(error => console.error('Erro ao salvar as alterações:', error)); //linha 500
                 });
-            });
-    }
+});}
 
     // Função de inativar/ativar
     function atualizarStatus(id, novoStatus) {
@@ -529,37 +539,41 @@ linha.innerHTML = `
     }
 
     // Exemplo de função para salvar edição
-    function salvarEdicaoFuncionario() {
-    const cpf = document.getElementById('cpf-editar').value;
-    const funcionarioEditado = {
-        nome: document.getElementById('nome-editar').value,
-        rg: document.getElementById('rg-editar').value,
-        centro_custo: document.getElementById('centro-custo-editar').value,
-        cnh: document.getElementById('cnh-numero-editar').value,
-        categoria_cnh: document.getElementById('cnh-categoria-editar').value,
-        validade_cnh: document.getElementById('cnh-validade-editar').value,
-        nivel_acesso: document.getElementById('permissao-acesso').value,
-        data_nascimento: document.getElementById('data-nascimento-editar').value,
-        placa: document.getElementById('veiculo-editar').value,
-        cartao: document.getElementById('placa-cartão-editar').value,
-        email: document.getElementById('email-editar').value,
-        telefone: document.getElementById('telefone-editar').value, // <-- Adicionado
-        senha: document.getElementById('Senha-editar').value
-    };
+    //function salvarEdicaoFuncionario() {
+    //    console.log("functionSalvarEdicaoFuncionario\n")
+    //const cpf = document.getElementById('cpf-editar').value;
 
-    fetch(`/api/funcionarios/${cpf}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(funcionarioEditado)
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.mensagem || "Funcionário atualizado!");
-        carregarTabela();
-        fecharModal();
-    })
-    .catch(error => alert("Erro ao atualizar funcionário: " + error));
-}
+    //const dtnasc = formatarDataBrasileira(document.getElementById('data-nascimento-editar'))
+    //const funcionarioEditado = {
+        //nome: document.getElementById('nome-editar').value,
+        //rg: document.getElementById('rg-editar').value,
+        //centro_custo: document.getElementById('centro-custo-editar').value,
+        //cnh: document.getElementById('cnh-numero-editar').value,
+        //categoria_cnh: document.getElementById('cnh-categoria-editar').value,
+        //validade_cnh: document.getElementById('cnh-validade-editar').value,
+        //nivel_acesso: document.getElementById('permissao-acesso').value,
+        ////data_nascimento: document.getElementById('data-nascimento-editar').value,
+        //data_nascimento: dtnasc,
+        //placa: document.getElementById('veiculo-editar').value,
+        //cartao: document.getElementById('placa-cartão-editar').value,
+        //email: document.getElementById('email-editar').value,
+        //telefone: document.getElementById('telefone-editar').value, // <-- Adicionado
+        //senha: document.getElementById('Senha-editar').value
+    //};
+
+    //fetch(`/api/funcionarios/atualizar/${cpf}`, { //linha 553
+        //method: 'POST',
+        //headers: { 'Content-Type': 'application/json' },
+        //body: JSON.stringify(funcionarioEditado)
+    //})
+    //.then(response => response.json())
+    //.then(data => {
+        //alert(data.mensagem || "Funcionário atualizado!");
+        //carregarTabela();
+        //fecharModal();
+    //})
+    //.catch(error => alert("Erro ao atualizar funcionário: " + error));
+//}
 
     // Carregar a tabela ao iniciar
     window.onload = function () {
