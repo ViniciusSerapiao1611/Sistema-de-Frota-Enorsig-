@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=width=device-width, initial-scale=1.0">
@@ -10,68 +11,59 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/abasteciimento.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
-    
+
 </head>
+
 <body>
-    <!-- Botão de alternância de modo escuro -->
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
-    </div>
+    <button class="menu-toggle" onclick="alternarMenu()">☰ Menu</button>
 
     <!-- Barra lateral -->
-    <!-- Botões de menu e modo escuro -->
-    <button class="menu-toggle" onclick="alternarMenu()">☰ Menu</button>
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
-    </div>
-
-     <!-- Barra lateral -->
     <div class="barra-lateral" id="barra-lateral">
         <h2>EnorFrota</h2>
         <ul>
             <li class="ativo">
                 <a href="{{ url_for('index')}}">
-                <i class="fas fa-home"></i> Início
+                    <i class="fas fa-home"></i> Início
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('relatorios')}}">
-                <i class="fas fa-file-alt"></i> Relatórios
+                    <i class="fas fa-file-alt"></i> Relatórios
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('veiculos')}}">
-                <i class="fas fa-car"></i> Veículos
+                    <i class="fas fa-car"></i> Veículos
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('abastecimento')}}">
-                <i class="fas fa-gas-pump"></i> Abastecimento
+                    <i class="fas fa-gas-pump"></i> Abastecimento
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('usuarios_principal')}}">
-                <i class="fas fa-users"></i> Usuários
+                    <i class="fas fa-users"></i> Usuários
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('centrocusto')}}">
-                <i class="fas fa-dollar-sign"></i> Centro de Custo
+                    <i class="fas fa-dollar-sign"></i> Centro de Custo
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('base')}}">
-                <i class="fas fa-building"></i> Base
+                    <i class="fas fa-building"></i> Base
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('cartaocombustivel')}}">
-                <i class="fas fa-credit-card"></i> Cartão
+                    <i class="fas fa-credit-card"></i> Cartão
                 </a>
             </li>
             <li>
                 <a href="{{ url_for('logout')}}">
-                <i class="fas fa-sign-in-alt"></i> Sair
+                    <i class="fas fa-sign-in-alt"></i> Sair
                 </a>
             </li>
             <!-- Exemplo de botão/aba modo escuro na barra lateral -->
@@ -83,17 +75,13 @@
 
         <div class="informacoes-usuario">
             <div class="avatar-usuario">
-                <img src="img/avatar.jpg" alt="Foto do Usuário">
+                <img src="{{ url_for('static', filename='img/avatar.jpg') }}" alt="Foto do Usuário">
             </div>
             <div class="detalhes-usuario">
                 <p>{{session.user_name}}</p>
                 <p>Perfil: {{session.acesso}}</p>
             </div>
         </div>
-    </div>
-
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
     </div>
 
     <div class="conteudo-principal">
@@ -130,7 +118,7 @@
                     <p>230 Litros</p>
                 </div>
             </div>
-            
+
             <div class="card">
                 <div class="card-icon">
                     <i class="fas fa-dollar-sign"></i>
@@ -140,7 +128,7 @@
                     <p>R$ 1.168,00</p>
                 </div>
             </div>
-            
+
             <div class="card">
                 <div class="card-icon">
                     <i class="fas fa-car"></i>
@@ -150,7 +138,7 @@
                     <p>5</p>
                 </div>
             </div>
-            
+
             <div class="card">
                 <div class="card-icon">
                     <i class="fas fa-map-marker-alt"></i>
@@ -180,17 +168,26 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>2025-12-31</td>
-                    <td>João Silva</td>
-                    <td>123456</td>
-                    <td>XYZ-5678</td>
-                    <td>Gasolina</td>
-                    <td>50</td>
-                    <td>5.89</td>
-                    <td>294.50</td>
-                    <td><span class="status-comprovante">Há comprovante</span></td>
-                    <td>XYZ-5678</td> <!-- ID_Cartao igual à Placa -->
+                {% for abastecimento in abastecimentos %}
+                <tr data-id="{{ abastecimento.ID }}">
+                    <td>{{ abastecimento.DATA }}</td>
+                    <td>{{ abastecimento.CONDUTOR }}</td>
+                    <td>{{ abastecimento.HODOMETRO }}</td>
+                    <td>{{ abastecimento.PLACA }}</td>
+                    <td>{{ abastecimento.COMBUSTIVEL }}</td>
+                    <td>{{ abastecimento.LITROS }}</td>
+                    <td>{{ abastecimento.VALOR_UN }}</td>
+                    <td>{{ abastecimento.VALOR_ABASTECIMENTO }}</td>
+                    <td>
+                        {% if abastecimento.COMPROVANTE %}
+                            <a href="{{ abastecimento.COMPROVANTE }}" target="_blank">
+                                <span class="status-comprovante">Há comprovante</span>
+                            </a>
+                        {% else %}
+                            <span class="status-comprovante">Sem comprovante</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ abastecimento.ID_CARTAO }}</td>
                     <td class="acoes">
                         <div class="botoes-acao">
                             <button class="botao-icon" onclick="abrirModalEdicao(this)">
@@ -199,53 +196,25 @@
                             <button class="botao-icon botao-download">
                                 <i class="fas fa-download"></i>
                             </button>
-                            <button class="botao-icon botao-envios">
-                                <i class="fas fa-user"></i>
-                            </button>
-                            <button class="botao-icon botao-historico">
-                                <i class="fas fa-history"></i>
-                            </button>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td>2025-05-05</td>
-                    <td>João Silva</td>
-                    <td>123456</td>
-                    <td>XYZ-5678</td>
-                    <td>Gasolina</td>
-                    <td>50</td>
-                    <td>5.89</td>
-                    <td>294.50</td>
-                    <td><span class="status-comprovante">Há comprovante</span></td>
-                    <td>XYZ-5678</td> <!-- ID_Cartao igual à Placa -->
-                    <td class="acoes">
-                        <div class="botoes-acao">
-                            <button class="botao-icon" onclick="abrirModalEdicao(this)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="botao-icon botao-download">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="botao-icon botao-envios">
-                                <i class="fas fa-user"></i>
-                            </button>
-                            <button class="botao-icon botao-historico">
-                                <i class="fas fa-history"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 
+    <!-- Modal para edição de abastecimento -->
     <div id="modalEdicao" class="modal">
         <div class="modal-content">
             <span class="fechar-modal" onclick="fecharModal()">&times;</span>
             <h2><i class="fas fa-eye"></i> Visualizar Abastecimento</h2>
-            
+
             <form id="formEdicao">
+                <div class="campo">
+                    <label>Data do Abastecimento:</label>
+                    <input type="date" id="dataInput" required />
+                </div>
                 <!-- Informações do Motorista -->
                 <div class="modal-category">
                     <div class="category-title">
@@ -316,81 +285,7 @@
             </form>
         </div>
     </div>
-
-    <!-- Modal para exibir todos os envios do motorista -->
-    <div id="modalEnviosMotorista" class="modal">
-        <div class="modal-content">
-            <span class="fechar-modal" onclick="fecharModalEnviosMotorista()">&times;</span>
-            <h2>Envios do Motorista</h2>
-            <table id="tabelaEnviosMotorista">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Data Abastecimento</th>
-                        <th>Motorista</th>
-                        <th>Placa Cartão</th>
-                        <th>CC</th>
-                        <th>Base</th>
-                        <th>Tipo Combustível</th>
-                        <th>Hodômetro Saída</th>
-                        <th>Hodômetro Retorno</th>
-                        <th>R$ Unitário</th>
-                        <th>Litros</th>
-                        <th>Total</th>
-                        <th>Comprovante</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Linhas serão preenchidas dinamicamente -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 8px;
-        }
-
-        .fechar-modal {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .fechar-modal:hover,
-        .fechar-modal:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        #tabelaEnviosMotorista {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-    </style>
-
+    
     <script>
         // Verifica o estado do modo escuro ao carregar a página
         document.addEventListener('DOMContentLoaded', () => {
@@ -545,18 +440,17 @@
         }
 
         // Função para extrair dados da tabela
-        function atualizarDashboardsSeguro() {
-            const linhas = document.querySelectorAll("table tbody tr");
+        function atualizarDashboardsSeguro(data) {
             let totalLitros = 0;
             let valorTotal = 0;
             const placas = new Set();
-            const bases = new Set();
+            const bases = new Set(); // Adapte se tiver campo base
 
-            linhas.forEach((linha) => {
-                const celulas = linha.querySelectorAll("td");
-                totalLitros += parseFloat(celulas[5].innerText.replace(',', '.')) || 0;
-                valorTotal += parseFloat(celulas[7].innerText.replace(',', '.')) || 0;
-                placas.add(celulas[3].innerText.trim());
+            data.forEach(item => {
+                totalLitros += parseFloat(item.litros) || 0;
+                valorTotal += parseFloat(item.valor_abastecimento) || 0;
+                placas.add(item.placa);
+                // bases.add(item.base); // Descomente se tiver campo base
             });
 
             const elLitros = getCardByTitle("Total Abastecido");
@@ -589,7 +483,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             criarGraficos();
             atualizarDashboardsSeguro();
-            carregarAbastecimentos();
+            // carregarAbastecimentos();  // Remova ou comente esta linha
         });
 
         // Modal funcional
@@ -601,45 +495,97 @@
             linhaAtual = botao.closest('tr');
             const celulas = linhaAtual.querySelectorAll('td');
 
-            document.getElementById('motoristaInput').value = celulas[1].innerText; // Condutor
-            document.getElementById('idCartaoInput').value = celulas[9].innerText; // ID_Cartao
-            document.getElementById('placaInput').value = celulas[3].innerText; // Placa
-            document.getElementById('combustivelInput').value = celulas[4].innerText; // Combustivel
-            document.getElementById('hodometroInput').value = celulas[2].innerText; // Hodometro
-            document.getElementById('valorInput').value = celulas[6].innerText; // Valor_un
-            document.getElementById('litrosInput').value = celulas[5].innerText; // Litros
-            document.getElementById('totalInput').value = celulas[7].innerText; // Valor_abastecimento
+            // Data (converte dd/mm/yyyy para yyyy-mm-dd)
+            let dataTabela = celulas[0].innerText.trim();
+            document.getElementById('dataInput').value = dataTabela;
+
+            document.getElementById('motoristaInput').value = celulas[1].innerText;      // Condutor
+            document.getElementById('idCartaoInput').value = celulas[9].innerText;       // ID Cartão
+            document.getElementById('placaInput').value = celulas[3].innerText;          // Placa
+            document.getElementById('combustivelInput').value = celulas[4].innerText;    // Combustível
+            document.getElementById('hodometroInput').value = celulas[2].innerText;      // Hodômetro
+            document.getElementById('valorInput').value = celulas[6].innerText;          // Valor Unitário
+            document.getElementById('litrosInput').value = celulas[5].innerText;         // Litros
+            document.getElementById('totalInput').value = celulas[7].innerText;          // Valor Abastecimento
 
             document.getElementById('previewComprovante').style.display = 'none';
             document.getElementById('botaoSalvar').style.display = 'inline-block';
             modal.style.display = 'flex';
         }
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (!linhaAtual) return;
-            const celulas = linhaAtual.querySelectorAll('td');
-            // Atualiza cada célula corretamente conforme a ordem da tabela
-            celulas[1].innerText = document.getElementById('motoristaInput').value;      // Condutor
-            celulas[2].innerText = document.getElementById('hodometroInput').value;      // Hodometro
-            celulas[3].innerText = document.getElementById('placaInput').value;          // Placa
-            celulas[4].innerText = document.getElementById('combustivelInput').value;    // Combustivel
-            celulas[5].innerText = document.getElementById('litrosInput').value;         // Litros
-            celulas[6].innerText = document.getElementById('valorInput').value;          // Valor_un
-            celulas[7].innerText = document.getElementById('totalInput').value;          // Valor_abastecimento
+            // Evento de submit do formulário de edição
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!linhaAtual) return;
 
-            // Atualiza o status do comprovante se houver upload
-            const comprovanteInput = document.getElementById('comprovanteInput');
-            const celulaComprovante = celulas[8]; // Coluna Comprovante
-            if (comprovanteInput.files && comprovanteInput.files[0]) {
-                celulaComprovante.innerHTML = '<span class="status-comprovante ativo">Há comprovante</span>';
-            }
+                // Pegue o ID da linha (primeira célula)
+                const celulas = linhaAtual.querySelectorAll('td');
+               
+                const id = linhaAtual.getAttribute('data-id');
+                // Pegue a data da tabela (segunda célula)
+                let dataTabela = celulas[1].innerText.trim();
 
-            celulas[9].innerText = document.getElementById('idCartaoInput').value; // ID_Cartao
+                // Se vier no formato dd/mm/yyyy, converte para yyyy-mm-dd
+                if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataTabela)) {
+                    const [dia, mes, ano] = dataTabela.split('/');
+                    dataTabela = `${ano}-${mes}-${dia}`;
+                }
 
-            fecharModal();
-            atualizarDashboardsSeguro();
-        });
+                // Se vier no formato yyyy/mm/dd, converte para yyyy-mm-dd
+                if (/^\d{4}\/\d{2}\/\d{2}$/.test(dataTabela)) {
+                    dataTabela = dataTabela.replace(/\//g, '-');
+                }
+
+                // Monta o objeto com os dados do formulário
+                const dadosAtualizados = {
+                    data: document.getElementById('dataInput').value, // <-- agora pega do campo
+                    condutor: document.getElementById('motoristaInput').value,
+                    hodometro: document.getElementById('hodometroInput').value,
+                    placa: document.getElementById('placaInput').value,
+                    combustivel: document.getElementById('combustivelInput').value,
+                    litros: document.getElementById('litrosInput').value,
+                    valor_un: document.getElementById('valorInput').value,
+                    valor_abastecimento: document.getElementById('totalInput').value,
+                    id_cartao: document.getElementById('idCartaoInput').value
+                };
+
+                // Só adiciona comprovante se houver arquivo novo
+                const comprovanteInput = document.getElementById('comprovanteInput');
+                if (comprovanteInput.files && comprovanteInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        dadosAtualizados.comprovante = e.target.result; // base64
+                        enviarAtualizacao(dadosAtualizados, id);
+                    };
+                    reader.readAsDataURL(comprovanteInput.files[0]);
+                } else {
+                    enviarAtualizacao(dadosAtualizados, id);
+                }
+                // Não faz fetch aqui, só dentro de enviarAtualizacao!
+            });
+
+        function enviarAtualizacao(dados, id) {
+            fetch(`/api/abastecimentos/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.mensagem) {
+                    alert('Abastecimento atualizado com sucesso!');
+                    fecharModal();
+                    carregarAbastecimentos();
+                } else {
+                    alert('Erro ao atualizar: ' + (data.erro || 'Erro desconhecido'));
+                }
+            })
+            .catch(err => {
+                alert('Erro na requisição: ' + err);
+            });
+        }
 
         function fecharModal() {
             modal.style.display = 'none';
@@ -671,38 +617,6 @@
             const total = (valor * litros).toFixed(2);
             document.getElementById('totalInput').value = total;
         }
-
-        // Função para baixar os dados da linha como Excel
-        function baixarLinhaComoExcel(botao) {
-            const linha = botao.closest('tr'); // Encontra a linha correspondente
-            const celulas = linha.querySelectorAll('td'); // Seleciona todas as células da linha
-
-            // Extrai os dados da linha
-            const dadosLinha = Array.from(celulas).map(celula => celula.innerText);
-
-            // Cria um objeto de dados para o Excel
-            const dadosExcel = [
-                ["Data Abastecida", "Placa Veículo", "Motorista", "Placa Cartão", "Tipo de Combustível", "Hodômetro Abastecido", "R$ Unitário", "Litros", "Total", "Comprovante"],
-                dadosLinha.slice(0, 10)
-            ];
-
-            // Cria uma nova planilha
-            const ws = XLSX.utils.aoa_to_sheet(dadosExcel);
-
-            // Cria um novo workbook e adiciona a planilha
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Abastecimento");
-
-            // Gera o arquivo Excel e faz o download
-            XLSX.writeFile(wb, `Abastecimento_${dadosLinha[1]}.xlsx`);
-        }
-
-        // Adiciona o evento de clique ao botão de download
-        document.querySelectorAll('.botao-download').forEach(botao => {
-            botao.addEventListener('click', function () {
-                baixarLinhaComoExcel(this);
-            });
-        });
 
         // Atualiza a coluna "Comprovante" para exibir "Há comprovante" ou "Sem comprovante"
         document.querySelectorAll("table tbody tr").forEach((linha) => {
@@ -818,6 +732,74 @@
                 // ...
             });
         });
+
+        let dadosAbastecimentos = [];
+
+        function carregarAbastecimentos() {
+            fetch('api/abastecimentos')
+                .then(response => response.json())
+                .then(data => {
+                    dadosAbastecimentos = data; // Salva para uso nos dashboards
+                    preencherTabela(data);
+                    atualizarDashboardsSeguro(data);
+                    criarGraficos(data);
+                    ativarOrdenacaoTabela();
+                });
+        }
+        
+        function ativarOrdenacaoTabela() {
+            document.querySelectorAll("#tabela-abastecimento th").forEach((th, idx) => {
+                // Evita ordenar a coluna de ação
+                if (th.innerText.trim() !== "Ação") {
+                    th.style.cursor = "pointer";
+                    th.onclick = () => ordenarTabela(idx);
+                }
+            });
+        }
+
+        function preencherTabela(data) {
+            const tbody = document.querySelector('#tabela-abastecimento tbody');
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                let comprovanteHtml = '';
+                if (item.comprovante && item.comprovante.startsWith('http')) {
+                    comprovanteHtml = `<span class="status-ativo">comprovante anexado</span>`;
+                } else {
+                    comprovanteHtml = '';
+                }
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.data}</td> 
+                    <td>${item.condutor}</td>
+                    <td>${item.hodometro}</td>
+                    <td>${item.placa}</td>
+                    <td>${item.combustivel}</td>
+                    <td>${item.litros}</td>
+                    <td>${item.valor_un}</td>
+                    <td>${item.valor_abastecimento}</td>
+                    <td>${comprovanteHtml}</td>
+                    <td>${item.id_cartao}</td>
+                    <td>
+                        <button class="botao-icon" onclick="abrirModalEdicao(this)" title="Editar"><i class="fas fa-edit"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarAbastecimentos();
+        });
+
+        // Botão "voltar ao topo"
+        const btnTopo = document.getElementById('btnTopo');
+        window.addEventListener('scroll', () => {
+            btnTopo.style.display = window.scrollY > 200 ? 'block' : 'none';
+        });
+        btnTopo.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
     </script>
 </body>
-</html>

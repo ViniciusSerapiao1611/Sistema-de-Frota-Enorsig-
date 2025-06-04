@@ -62,11 +62,11 @@ body {
 
 /* Conteúdo principal */
 .conteudo {
-    margin-left: 270px; /* Espaço para a barra lateral */
+    margin-left: 250px; /* Espaço igual ao da barra lateral */
     padding: 20px;
     background-color: #f8f8f8;
     border-radius: 10px;
-    width: calc(100% - 270px); /* Ocupa o restante da largura */
+    width: calc(100% - 250px); /* Ocupa o restante da largura */
     display: flex;
     flex-direction: column;
     gap: 20px; /* Espaçamento entre os containers */
@@ -285,9 +285,15 @@ body {
 
 /* Minimalista para ações */
 .tabela-usuarios td.acoes {
-    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
     background: none;
     border: none;
+    text-align: center;
+    vertical-align: middle;
+    height: 100%;
 }
 
 /* Status pill minimalista */
@@ -1187,6 +1193,11 @@ body.dark-mode {
     max-width: 100%;
 }
 
+.tabela-usuarios thead th {
+    
+    z-index: 2;
+}
+
 /* Cabeçalho arredondado */
 .tabela-usuarios th:first-child,
 .tabela-custom th:first-child {
@@ -1241,4 +1252,14 @@ body.dark-mode {
 .tabela-usuarios tr:hover,
 .tabela-custom tr:hover {
     background: #f7f7f7;
+}
+
+/* Oculta colunas de dados pessoais */
+.ocultar-coluna {
+    display: none;
+}
+
+#btnTopo:hover {
+    background: #7a0000;
+    transform: scale(1.08);
 }

@@ -60,16 +60,6 @@ body {
     font-size: 16px;
 }
 
-.conteudo {
-    margin-left: 270px; /* Espaço para a barra lateral */
-    padding: 20px;
-    background-color: #ebebeb;
-    border-radius: 10px;
-    width: calc(100% - 270px); /* Ocupa o restante da largura */
-    min-height: 100vh; /* Garante que ocupe toda a altura da tela */
-    box-sizing: border-box;
-}
-
 .container-formulario, .container-tabela {
     background-color: #fff;
     padding: 20px;

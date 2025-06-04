@@ -39,7 +39,7 @@
         /* Centraliza e limita a largura do conteúdo */
         .conteudo {
             margin-left: 270px;
-            margin-right: auto;
+            margin-right: 60px; /* Reduz a margem direita */
             padding: 20px;
             width: 100%;
             max-width: 1100px; /* Limite de largura para centralizar */
@@ -62,7 +62,7 @@
                 width: 200px;
             }
             .conteudo {
-                margin-left: 0;
+                margin-left: 10;
                 max-width: 98vw;
                 min-height: 100vh;
                 align-items: center;
@@ -696,8 +696,6 @@
 <body>
     <!-- Botões de menu e modo escuro -->
     <button class="menu-toggle" onclick="alternarMenu()">☰ Menu</button>
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
     </div>
 
      <!-- Barra lateral -->
@@ -758,7 +756,7 @@
 
         <div class="informacoes-usuario">
             <div class="avatar-usuario">
-                <img src="img/avatar.jpg" alt="Foto do Usuário">
+                <img src="{{ url_for('static', filename='img/avatar.jpg') }}" alt="Foto do Usuário">
             </div>
             <div class="detalhes-usuario">
                 <p>{{session.user_name}}</p>

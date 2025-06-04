@@ -7,10 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios-principal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
-
 <body>
-    <!-- Botão de Modo Dark -->
-    <button id="modo-dark-btn" class="modo-dark-btn" onclick="alternarModoDark()">🌙</button>
 
      <!-- Barra lateral -->
     <div class="barra-lateral" id="barra-lateral">
@@ -122,21 +119,20 @@
 
         <!-- Tabela de usuários -->
         <div class="tabela-container">
-            <table class="tabela-custom tabela-usuarios">
+            <table class="tabela-usuarios">
                 <thead>
                     <tr>
-                        <th class="cpf">CPF</th>
-                        <th>RG</th>
+                        <th>CPF</th>
+                        <th class="ocultar-coluna">RG</th>
                         <th>Nome</th>
-                        <th>Data Nascimento</th>
-                        <th>Nivel Acesso</th>
+                        <th class="ocultar-coluna">Data Nascimento</th>
+                        <th>Nível Acesso</th>
                         <th>CNH</th>
-                        <th>Categoria CNH</th>
+                        <th class="ocultar-coluna">Categoria CNH</th>
                         <th>Validade CNH</th>
                         <th>Veículo</th>
                         <th>Centro Custo</th>
                         <th>Cartão</th>
-                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -231,7 +227,11 @@
                             <input type="email" id="email-editar" name="email">
                         </div>
                         <div>
-                            <label for="celular-editar">Senha</label>
+                            <label for="telefone-editar">Telefone</label>
+                            <input type="text" id="telefone-editar" name="telefone">
+                        </div>
+                        <div>
+                            <label for="Senha-editar">Senha</label>
                             <input type="text" id="Senha-editar" name="Senha">
                         </div>
                     </div>
@@ -305,7 +305,7 @@
             </div>
             <div class="form-actions">
                 <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
-                <button type="submit" class="btn-salvar">Salvar</button>
+                <button type="button" class="btn-salvar" onclick="salvarEdicaoFuncionario()">Salvar</button>
             </div>
         </div>
     </div>
@@ -327,6 +327,10 @@
         </div>
     </div>
 
+    <button id="btnTopo" title="Voltar ao topo" style="display:none;position:fixed;bottom:32px;right:32px;z-index:999;background:#B00000;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.4em;box-shadow:0 2px 8px rgba(0,0,0,0.15);cursor:pointer;transition:background 0.2s,transform 0.2s;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
 <script>
     // Função para mascarar CPF
     function mascararCPF(cpf) {
@@ -342,7 +346,7 @@
 
     // Função para carregar a tabela com os dados filtrados
     function carregarTabela(filtros = {}) {
-        fetch('/api/funcionarios')  // Buscar dados da API
+        fetch('http://127.0.0.1:5000/api/funcionarios')  // Buscar dados da API
             .then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector(".tabela-usuarios tbody");
@@ -354,7 +358,8 @@
                     if (filtros.cpf && funcionario.cpf && !funcionario.cpf.includes(filtros.cpf)) return false;
                     if (filtros.nome && funcionario.nome && !funcionario.nome.toLowerCase().includes(filtros.nome.toLowerCase())) return false;
                     if (filtros.cnh && funcionario.cnh && !funcionario.cnh.includes(filtros.cnh)) return false;
-                    if (filtros.status && filtros.status !== "todos" && funcionario.status !== filtros.status) return false;
+                    // Remova ou comente a linha abaixo, pois não existe mais o campo status:
+                    // if (filtros.status && filtros.status !== "todos" && funcionario.status !== filtros.status) return false;
                     return true;
                 });
 
@@ -362,19 +367,18 @@
                     const linha = document.createElement("tr");
 linha.innerHTML = `
     <td>${mascararCPF(funcionario.cpf)}</td>
-    <td>${mascararRG(funcionario.rg)}</td>
+    <td class="ocultar-coluna">${mascararRG(funcionario.rg)}</td>
     <td>${funcionario.nome || ""}</td>
-    <td>${funcionario.data_nascimento || ""}</td>
+    <td class="ocultar-coluna">${formatarDataBrasileira(funcionario.data_nascimento) || ""}</td>
     <td>${funcionario.nivel_acesso || ""}</td>
     <td>${funcionario.cnh || ""}</td>
-    <td>${funcionario.categoria_cnh || ""}</td>
-    <td>${funcionario.validade_cnh || ""}</td>
+    <td class="ocultar-coluna">${funcionario.categoria_cnh || ""}</td>
+    <td>${formatarDataBrasileira(funcionario.validade_cnh) || ""}</td>
     <td>${funcionario.placa || ""}</td>
     <td>${funcionario.centro_custo || ""}</td>
     <td>${funcionario.cartao || ""}</td>
-    <td><span class="status ${funcionario.status}">${funcionario.status ? funcionario.status.charAt(0).toUpperCase() + funcionario.status.slice(1) : ""}</span></td>
     <td class="acoes">
-        <button class="btn inativar" title="Inativar" data-id="${funcionario.cpf}"><i class="fas fa-power-off"></i></button>
+        <!-- Removido o botão de inativar/ativar, deixando apenas o de editar -->
         <button class="btn editar" title="Editar" data-id="${funcionario.cpf}"><i class="fas fa-edit"></i></button>
     </td>
 `;
@@ -427,7 +431,7 @@ linha.innerHTML = `
 
     // Função para editar usuário
     function editarUsuario(id) {
-        fetch('/api/funcionarios')  // Buscar dados da API
+        fetch('http://127.0.0.1:5000/api/funcionarios')  // Buscar dados da API
         .then(response => response.json())
         .then(data => {
             const usuario = data.find(funcionario => funcionario.cpf === id);  // Usando o id para buscar o funcionário
@@ -439,6 +443,7 @@ linha.innerHTML = `
             document.getElementById("data-nascimento-editar").value = usuario.data_nascimento || "";
             document.getElementById("permissao-acesso").value = usuario.nivel_acesso || "";
             document.getElementById("email-editar").value = usuario.email || "";
+            document.getElementById("telefone-editar").value = usuario.telefone || "";
             document.getElementById("Senha-editar").value = usuario.senha || "";
             document.getElementById("cnh-numero-editar").value = usuario.cnh || "";
             document.getElementById("cnh-categoria-editar").value = usuario.categoria_cnh || "";
@@ -461,6 +466,7 @@ linha.innerHTML = `
                     usuario.data_nascimento = document.getElementById("data-nascimento-editar").value;
                     usuario.nivel_acesso = document.getElementById("permissao-acesso").value;
                     usuario.email = document.getElementById("email-editar").value;
+                    usuario.telefone = document.getElementById("telefone-editar").value;
                     usuario.senha = document.getElementById("Senha-editar").value;
                     usuario.cnh = document.getElementById("cnh-numero-editar").value;
                     usuario.categoria_cnh = document.getElementById("cnh-categoria-editar").value;
@@ -505,16 +511,6 @@ linha.innerHTML = `
 
     // Adicionando eventos de botões de ação
     function adicionarEventosBotoes() {
-        document.querySelectorAll(".btn.inativar, .btn.ativar").forEach(button => {
-            button.addEventListener("click", function () {
-                const index = this.getAttribute("data-index");
-                const usuarios = document.querySelectorAll(".tabela-usuarios tbody tr");
-                const statusAtual = usuarios[index].status;
-                const novoStatus = statusAtual === "ativo" ? "inativo" : "ativo";
-                atualizarStatus(index, novoStatus);
-            });
-        });
-
         document.querySelectorAll(".btn.editar").forEach(button => {
             button.addEventListener("click", function () {
                 const id = this.getAttribute("data-id");
@@ -523,10 +519,63 @@ linha.innerHTML = `
 });
     }
 
+    // Exemplo de função para salvar edição
+    function salvarEdicaoFuncionario() {
+    const cpf = document.getElementById('cpf-editar').value;
+    const funcionarioEditado = {
+        nome: document.getElementById('nome-editar').value,
+        rg: document.getElementById('rg-editar').value,
+        centro_custo: document.getElementById('centro-custo-editar').value,
+        cnh: document.getElementById('cnh-numero-editar').value,
+        categoria_cnh: document.getElementById('cnh-categoria-editar').value,
+        validade_cnh: document.getElementById('cnh-validade-editar').value,
+        nivel_acesso: document.getElementById('permissao-acesso').value,
+        data_nascimento: document.getElementById('data-nascimento-editar').value,
+        placa: document.getElementById('veiculo-editar').value,
+        cartao: document.getElementById('placa-cartão-editar').value,
+        email: document.getElementById('email-editar').value,
+        telefone: document.getElementById('telefone-editar').value, // <-- Adicionado
+        senha: document.getElementById('Senha-editar').value
+    };
+
+    fetch(`http://127.0.0.1:5000/api/funcionarios/${cpf}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(funcionarioEditado)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.mensagem || "Funcionário atualizado!");
+        carregarTabela();
+        fecharModal();
+    })
+    .catch(error => alert("Erro ao atualizar funcionário: " + error));
+}
+
     // Carregar a tabela ao iniciar
     window.onload = function () {
         carregarTabela();
     };
+
+    function formatarDataBrasileira(dataISO) {
+        if (!dataISO) return "";
+        // Aceita tanto "2025-12-31" quanto "2025-12-31T00:00:00"
+        const data = new Date(dataISO);
+        if (isNaN(data)) return dataISO; // Se não for data válida, retorna original
+        const dia = String(data.getDate()).padStart(2, '0');
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const ano = data.getFullYear();
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    // Botão "voltar ao topo"
+    const btnTopo = document.getElementById('btnTopo');
+    window.addEventListener('scroll', () => {
+        btnTopo.style.display = window.scrollY > 200 ? 'block' : 'none';
+    });
+    btnTopo.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 </script>
     </body>
 </html>

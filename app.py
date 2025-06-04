@@ -88,6 +88,64 @@ def atualizar_status(id):
 
 # APLICAÇÃO ABAIXO É REFERENTE A PAGINA "CENTRO DE CUSTO"----------------------------------------------------
 
+@app.route('/api/centros_custo/<int:id>', methods=['PUT'])
+def atualizar_status_centro_custo(id):
+    try:
+        data = request.get_json()
+        print("DADOS RECEBIDOS:", data)  # debug
+        novo_status = data.get('status')
+
+        if novo_status not in ['Ativo', 'Inativo']:
+            return jsonify({"erro": "Status inválido"}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE dbo.tab_centrocusto
+            SET STATUS = ?
+            WHERE ID_CENTRO_CUSTO = ?
+        """, (novo_status, id))
+        conn.commit()
+        conn.close()
+        return jsonify({"mensagem": "Status atualizado com sucesso!"}), 200
+
+    except Exception as e:
+        print("ERRO AO ATUALIZAR STATUS:", e)
+        return jsonify({"erro": str(e)}), 500
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/api/centros_custo', methods=['GET'])
 def listar_centros_custo():
     try:
@@ -112,15 +170,22 @@ def listar_centros_custo():
 def adicionar_centro_custo():
     try:
         data = request.get_json()
+
+        id_centro = data['ID_CENTRO_CUSTO']
+        nome = data['NOME']
+        responsavel = data['RESPONSAVEL']
+        status = data['STATUS']
+
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO dbo.tab_centrocusto (ID_CENTRO_CUSTO, NOME, RESPONSAVEL, STATUS)
             VALUES (?, ?, ?, ?)
-        """, data['id_centro_custo'], data['nome'], data['responsavel'], data['status'])
+        """, id_centro, nome, responsavel, status)
         conn.commit()
         conn.close()
         return jsonify({"mensagem": "Centro de Custo cadastrado com sucesso!"}), 201
+
     except Exception as e:
         print("ERRO AO SALVAR CENTRO DE CUSTO:", e)
         return jsonify({"erro": str(e)}), 500
@@ -133,7 +198,7 @@ def listar_veiculos():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT MARCA, MODELO, ANO, RENAVAM, PLACA, TIPO_COMBUSTIVEL, HODOMETRO_INICIAL, MOTORISTA, TIPO_LOCACAO, DOCUMENTO, STATUS
+            SELECT MARCA, MODELO, ANO, RENAVAM, PLACA, TIPO_COMBUSTIVEL, HODOMETRO_INICIAL, CONDUTOR, TIPO_LOCACAO, DOCUMENTO, STATUS
             FROM dbo.tab_veiculos
         """)
         veiculos = []
@@ -146,7 +211,7 @@ def listar_veiculos():
                 "Placa": row.PLACA,
                 "Tipo_combustivel": row.TIPO_COMBUSTIVEL,
                 "Hodometro_inicial": row.HODOMETRO_INICIAL,
-                "Motorista": row.MOTORISTA,
+                "Motorista": row.CONDUTOR,  # Aqui também
                 "Tipo_Locacao": row.TIPO_LOCACAO,
                 "Documento": row.DOCUMENTO,
                 "Status": row.STATUS    
@@ -156,45 +221,48 @@ def listar_veiculos():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
+
 @app.route('/api/veiculos', methods=['POST'])
 def adicionar_veiculo():
     try:
         data = request.get_json()
-        print("Recebido para inserir:", data)  # <-- Para depuração
+        print("Recebido para inserir:", data)
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO dbo.tab_veiculos
-            (MARCA, MODELO, ANO, RENAVAM, PLACA, TIPO_COMBUSTIVEL, HODOMETRO_INICIAL, MOTORISTA, TIPO_LOCACAO, DOCUMENTO, STATUS)
+            (MARCA, MODELO, ANO, RENAVAM, PLACA, TIPO_COMBUSTIVEL, HODOMETRO_INICIAL, CONDUTOR, TIPO_LOCACAO, DOCUMENTO, STATUS)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        data['Marca'],
-        data['Modelo'],
-        data['Ano'],
-        data['Renavam'],
-        data['Placa'],
-        data['Tipo_combustivel'],
-        data['Hodometro_inicial'],
-        data['Motorista'],
-        data['Tipo_Locacao'],
-        data['Documento'],
-        data['Status'])
+        data['MARCA'],
+        data['MODELO'],
+        data['ANO'],
+        data['RENAVAM'],
+        data['PLACA'],
+        data['TIPO_COMBUSTIVEL'],
+        data['HODOMETRO_INICIAL'],
+        data['CONDUTOR'],
+        data['TIPO_LOCACAO'],
+        data['DOCUMENTO'],
+        data['STATUS'])
         conn.commit()
         conn.close()
         return jsonify({"mensagem": "Veículo cadastrado com sucesso!"}), 201
     except Exception as e:
+        print("ERRO AO INSERIR VEÍCULO:", e)
         return jsonify({"erro": str(e)}), 500
+
 
 @app.route('/api/veiculos/<placa>', methods=['PUT'])
 def atualizar_veiculo(placa):
     try:
         data = request.get_json()
-        print("Recebido para atualizar:", placa, data)  # <-- Adicione esta linha
+        print("Recebido para atualizar:", placa, data)
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
             UPDATE dbo.tab_veiculos
-            SET MARCA = ?, MODELO = ?, ANO = ?, RENAVAM = ?, TIPO_COMBUSTIVEL = ?, HODOMETRO_INICIAL = ?, MOTORISTA = ?, TIPO_LOCACAO = ?, DOCUMENTO = ?, STATUS = ?
+            SET MARCA = ?, MODELO = ?, ANO = ?, RENAVAM = ?, TIPO_COMBUSTIVEL = ?, HODOMETRO_INICIAL = ?, CONDUTOR = ?, TIPO_LOCACAO = ?, DOCUMENTO = ?, STATUS = ?
             WHERE PLACA = ?
         """, data['Marca'], data['Modelo'], data['Ano'], data['Renavam'], data['Tipo_combustivel'], data['Hodometro_inicial'], data['Motorista'], data['Tipo_Locacao'], data['Documento'], data['Status'], placa)
         conn.commit()
@@ -210,31 +278,35 @@ def adicionar_funcionario():
     try:
         data = request.get_json()
         conn = get_db_connection()
+        senha_hash = generate_password_hash(data['SENHA'])
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO dbo.tab_funcionarios
-            (NOME, RG, CPF, CENTRO_CUSTO, CNH, CATEGORIA_CNH, VALIDADE_CNH, NIVEL_ACESSO, DATA_NASCIMENTO, PLACA, ID_CARTAO, EMAIL, SENHA)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (NOME, RG, CPF, CENTRO_CUSTO, CNH, CATEGORIA_CNH, VALIDADE_CNH, NIVEL_ACESSO, DATA_NASCIMENTO, PLACA, ID_CARTAO, EMAIL, SENHA, TELEFONE)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            data['Nome'],
+            data['NOME'],
             data['RG'],
             data['CPF'],
-            data['CentroCusto'],
+            data['CENTRO_CUSTO'],
             data['CNH'],
-            data['Categoria_CNH'],
-            data['Validade_CNH'],
-            data['Nivel_acesso'],
-            data['Data_nascimento'],
-            data['Placa'],
-            data['ID_Cartao'],
-            data['Email'],
-            data['Senha']
+            data['CATEGORIA_CNH'],
+            data['VALIDADE_CNH'],
+            data['NIVEL_ACESSO'],
+            data['DATA_NASCIMENTO'],
+            data['PLACA'],
+            data['ID_CARTAO'],
+            data['EMAIL'],
+            senha_hash,
+            data['TELEFONE']
         ))
         conn.commit()
         conn.close()
         return jsonify({"mensagem": "Funcionário cadastrado com sucesso!"}), 201
     except Exception as e:
+        print("ERRO EM /api/funcionarios [POST]:", e)
         return jsonify({"erro": str(e)}), 500
+
 
 @app.route('/api/funcionarios', methods=['GET'])
 def listar_funcionarios():
@@ -268,32 +340,86 @@ def listar_funcionarios():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
     
+
+@app.route('/api/funcionarios/<cpf>', methods=['PUT'])
+def atualizar_funcionario(cpf):
+    try:
+        data = request.get_json()
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        senha_hash = generate_password_hash(data['senha'])
+        cursor.execute("""
+            UPDATE dbo.tab_funcionarios
+            SET NOME = ?, RG = ?, CENTRO_CUSTO = ?, CNH = ?, CATEGORIA_CNH = ?, VALIDADE_CNH = ?, NIVEL_ACESSO = ?, DATA_NASCIMENTO = ?, PLACA = ?, ID_CARTAO = ?, EMAIL = ?, SENHA = ?, TELEFONE = ?
+            WHERE CPF = ?
+        """, (
+            data['nome'],
+            data['rg'],
+            data['centro_custo'],
+            data['cnh'],
+            data['categoria_cnh'],
+            data['validade_cnh'],
+            data['nivel_acesso'],
+            data['data_nascimento'],
+            data['placa'],
+            data['cartao'],
+            data['email'],
+            senha_hash,
+            data['telefone'],
+            cpf
+        ))
+        conn.commit()
+        conn.close()
+        return jsonify({"mensagem": "Funcionário atualizado com sucesso!"})
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+    
 @app.route('/api/envio_km', methods=['POST'])
 def cadastrarkm():
     data = request.get_json()
+    from datetime import datetime
+
+    data_formatada = datetime.strptime(data['data'], '%Y-%m-%d')
+    total_formatado = int(data['kmRodada'])
+    if total_formatado < 0: 
+        return jsonify({"status": "erro", "mensagem": "A quilometragem não pode ser negativa."}), 400
+    
+
     print(f"Dados recebidos: {data}")
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT CENTRO_CUSTO, NOME, PLACA, ID_CARTAO FROM tab_funcionarios WHERE ID = ?", (session['user_id'],))
-        resultado = cursor.fetchone()
-        centrocusto = resultado[0]
-        nome = resultado[1]
-        placa = resultado[2]
-        id_cartao = resultado[3]
-        base = centrocusto
-        
-        cursor.execute("""
-            SELECT TOP 1 HODOMETRO
-            FROM tab_abastecimento
+        try:
+            cursor.execute("SELECT CENTRO_CUSTO, NOME, PLACA, ID_CARTAO FROM tab_funcionarios WHERE ID = ?", (session['user_id'],))
+            resultado = cursor.fetchone()
+            centrocusto = resultado[0]
+            nome = resultado[1]
+            placa = resultado[2]
+            id_cartao = resultado[3]
+            base = centrocusto
+        except Exception as e:
+            print("ERRO AO BUSCAR DADOS DO USUÁRIO:", e)  # <-- Adicione esta linha
+            return jsonify({"status": "erro", "mensagem": "Erro ao buscar dados do usuário."}), 500
+        try:
+            cursor.execute("""
+            SELECT TOP 1 HODOMETRO_FINAL
+            FROM tab_relatorio
             WHERE PLACA = ?
             ORDER BY DATA DESC, ID DESC
         """, (placa,))
-        ultimo_hodometro = cursor.fetchone()
-        if ultimo_hodometro and data['hodometroSaida'] < ultimo_hodometro[0]:
-            return jsonify({"status": "erro", "mensagem": f"Hodômetro atual menor que o último registro: {ultimo_hodometro[0]}."}), 400
-        cursor.execute("""
-                    INSERT INTO tab_relatorio(
+            ultimo_hodometro = cursor.fetchone()
+            if ultimo_hodometro:
+                ultimo_hodometro = ultimo_hodometro[0]
+                print(f"Último hodômetro encontrado: {int(ultimo_hodometro)}, hodometro saída: {int(data['hodometroSaida'])}") 
+            if ultimo_hodometro and int(data['hodometroSaida']) < int(ultimo_hodometro[0]):
+                return jsonify({"status": "erro", "mensagem": f"Hodômetro atual menor que o último registro: {ultimo_hodometro[0]}."}), 400
+        except Exception as e:
+            print("ERRO AO BUSCAR ÚLTIMO HODÔMETRO:", e)
+            return jsonify({"status": "erro", "mensagem": "Erro ao buscar último hodômetro."}), 500
+        try:
+            cursor.execute("""
+                INSERT INTO tab_relatorio(
                     CENTRO_CUSTO,
                     DATA,
                     NOME,
@@ -307,20 +433,29 @@ def cadastrarkm():
                     LOCAL_FINAL
                     )VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, (centrocusto,
-                            data['data'],
+                            data_formatada,
                             nome, 
                             placa,
                             base,
                             data['hodometroSaida'],
                             data['hodometroRetorno'],
-                            data['kmRodada'],
+                            total_formatado,
                             id_cartao,
                             data['localSaida'],
                             data['localRetorno']))
-        conn.commit()
-        return jsonify({"status": "ok", "mensagem": "Dados inseridos com sucesso"})
+            conn.commit()
+            return jsonify({"status": "ok", "mensagem": "Dados inseridos com sucesso"})
+        except Exception as e:
+            print("ERRO AO INSERIR DADOS:", e)
+            return jsonify({"status": "erro", "mensagem": "Erro ao inserir dados."}), 500
+        
     except Exception as e:
+        print("ERRO AO INSERIR KM:", e)  # <-- Adicione esta linha
+        import traceback
+        traceback.print_exc()
+
         return jsonify({"status": "erro", "mensagem": str(e)}), 500
+    
 
 @app.route('/api/envio_abastecimento', methods=['POST'])
 def cadastrodeabastecimento():
@@ -419,8 +554,9 @@ def editarviagem():
     #TODO carregar os dados de edição conforme usuário que fez login
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    cursor.execute()
+    
     return render_template('editar_viagem.html')
+
 
 
 @app.route('/login' , methods=['GET', 'POST'])
@@ -429,13 +565,17 @@ def login():
         email = request.form['emaillogin']
         senha = request.form['password']
 
+        if not email or not senha:
+            return redirect(url_for('login'))
+        
+
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM dbo.tab_funcionarios WHERE Email = ?", email)
         usuario = cursor.fetchone()
         conn.close()
         if usuario:
-            if usuario[13] == senha:
+            if check_password_hash(usuario[13], senha):
                 session.permanent = True
                 session['user_id'] = usuario[0]
                 session['acesso'] = usuario[8]
@@ -455,6 +595,7 @@ def login():
         
     return render_template('Frota.index.html')
 
+
 @app.route('/cadastroabastecimento')
 def cadastroabastecimento():
     #TODO carregar os dados de edição conforme usuário que fez login
@@ -472,9 +613,11 @@ def cadastroabastecimento():
         placa = cursor.fetchone()[0]
         cursor.execute("SELECT NUMERO_CARTAO, VALIDADE_CARTAO FROM dbo.tab_cartao WHERE PLACA_CARTAO = ?", placa)
         dados = cursor.fetchone()
+        if not dados:
+            return render_template('cadastro_abastecimento.html', error='Cartão não encontrado para o veículo associado ao usuário.')
         id_cartao = dados[0]
         validade_cartao = dados[1]
-        cursor.execute("SELECT DATA, VALOR_ABASTECIMENTO FROM dbo.tab_abastecimento WHERE ID_CARTAO = ?", placa)
+        cursor.execute("SELECT DATA, VALOR_ABASTECIMENTO FROM dbo.tab_abastecimento WHERE ID_CARTAO = ? ORDER BY DATA DESC", placa)
         abastecimentos = cursor.fetchall()
         if not abastecimentos:
             return render_template('cadastro_abastecimento.html', id_cartao=id_cartao, placa=placa, validade_cartao=validade_cartao)
@@ -488,12 +631,15 @@ def cadastroabastecimento():
 
     return render_template('cadastro_abastecimento.html')
 
+
 @app.route('/cadastrokm')
 def cadastrokm():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
     return render_template('cadastro_km.html')
+
+#LISTAR RELATÓRIOS ABAIXO ---------------------------------------------------------------------------------------------
 
 @app.route('/relatorios')
 def relatorios():
@@ -520,6 +666,71 @@ def relatorios():
         })
     return render_template('relatorios.html', relatorios=relatorios)
 
+
+@app.route('/api/relatorios', methods=['GET'])
+def listar_relatorios():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT ID, CENTRO_CUSTO, DATA, NOME, PLACA, BASE, HODOMETRO_INICIAL, HODOMETRO_FINAL, TOTAL, ID_CARTAO, LOCAL_INICIAL, LOCAL_FINAL
+            FROM dbo.tab_relatorio
+        """)
+        relatorios = []
+        for row in cursor.fetchall():
+            relatorios.append({
+                "id": row[0],
+                "centro_custo": row[1],
+                "data": str(row[2]),
+                "nome": row[3],
+                "placa": row[4],
+                "base": row[5],
+                "hodometro_inicial": row[6],
+                "hodometro_final": row[7],
+                "total": row[8],
+                "id_cartao": row[9],
+                "local_inicial": row[10],
+                "local_final": row[11]
+            })
+        conn.close()
+        return jsonify(relatorios)
+    except Exception as e:
+        print("ERRO EM /api/relatorios:", e)
+        return jsonify({"erro": str(e)}), 500
+
+
+@app.route('/api/relatorios/<int:id>', methods=['PUT'])
+def atualizar_relatorio(id):
+    try:
+        data = request.get_json()
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE dbo.tab_relatorio
+            SET CENTRO_CUSTO=?, DATA=?, NOME=?, PLACA=?, BASE=?, HODOMETRO_INICIAL=?, HODOMETRO_FINAL=?, TOTAL=?, ID_CARTAO=?, LOCAL_INICIAL=?, LOCAL_FINAL=?
+            WHERE ID=?
+        """, (
+            data['centro_custo'],
+            data['data'],
+            data['nome'],
+            data['placa'],
+            data['base'],
+            data['hodometro_inicial'],
+            data['hodometro_final'],
+            data['total'],
+            data['id_cartao'],
+            data['local_inicial'],
+            data['local_final'],
+            id
+        ))
+        conn.commit()
+        conn.close()
+        return jsonify({"mensagem": "Relatório atualizado com sucesso!"})
+    except Exception as e:
+        print("ERRO EM /api/relatorios/<id>:", e)
+        return jsonify({"erro": str(e)}), 500
+
+
 @app.route('/veiculos')
 def veiculos():
     if 'user_id' not in session:
@@ -529,6 +740,7 @@ def veiculos():
     else:
         return redirect(url_for('index'))
     
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -539,9 +751,16 @@ def abastecimento():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     if session.get('acesso') != 'operador':
-        return render_template('abastecimento.html')
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM tab_abastecimento ORDER BY DATA DESC")
+        #SELECT ID, DATA, CONDUTOR, HODOMETRO, PLACA, COMBUSTIVEL, LITROS, VALOR_UN, VALOR_ABASTECIMENTO, COMPROVANTE, ID_CARTAO
+        abastecimentos = cursor.fetchall()
+        conn.close()
+        return render_template('abastecimento.html', abastecimentos=abastecimentos)
     else:
         return redirect(url_for('index'))
+
 
 @app.route('/usuarios')
 def usuarios():
@@ -552,6 +771,7 @@ def usuarios():
     else:
         return redirect(url_for('index'))
 
+
 @app.route('/usuarios_principal')
 def usuarios_principal():
     if 'user_id' not in session:
@@ -560,6 +780,7 @@ def usuarios_principal():
         return render_template('usuarios-principal.html')
     else:
         return redirect(url_for('index'))
+
 
 @app.route('/centrocusto')
 def centrocusto():
@@ -570,6 +791,7 @@ def centrocusto():
     else:
         return redirect(url_for('index'))
     
+
 @app.route('/base')
 def base():
     if 'user_id' not in session:
@@ -582,6 +804,7 @@ def base():
     else:
         
         return redirect(url_for('index'))
+
 
 @app.route('/cartaocombustivel')
 def cartaocombustivel():
@@ -606,9 +829,10 @@ def cartaocombustivel():
                 'Modelo':row[1]
             })
 
-        return render_template('cartao_combustivel.html', bases=bases,veiculos=veiculos)
+        return render_template('cartao_novo.html', bases=bases,veiculos=veiculos)
     else:
         return redirect(url_for('index'))
+
 
 @app.route('/recebimentocartao')
 def recebimentocartao():
@@ -637,11 +861,108 @@ def veiculossecundaria():
     else:
         return redirect(url_for('index'))
     
+@app.route('/api/abastecimentos/<int:id>', methods=['POST'])
+def atualizar_abastecimento(id):
+    try:
+        data = request.get_json()
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
-    
+        # Se comprovante vier no JSON e não for vazio, atualiza; senão, não altera o campo
+        if 'comprovante' in data and data['comprovante']:
+            cursor.execute("""
+                UPDATE dbo.tab_abastecimento
+                SET DATA = ?, CONDUTOR = ?, HODOMETRO = ?, PLACA = ?, COMBUSTIVEL = ?, LITROS = ?, VALOR_UN = ?, VALOR_ABASTECIMENTO = ?, COMPROVANTE = ?, ID_Cartao = ?
+                WHERE ID = ?
+            """, (
+                data['data'],
+                data['condutor'],
+                data['hodometro'],
+                data['placa'],
+                data['combustivel'],
+                data['litros'],
+                data['valor_un'],
+                data['valor_abastecimento'],
+                data['comprovante'],
+                data['id_cartao'],
+                id
+            ))
+        else:
+            cursor.execute("""
+                UPDATE dbo.tab_abastecimento
+                SET DATA = ?, CONDUTOR = ?, HODOMETRO = ?, PLACA = ?, COMBUSTIVEL = ?, LITROS = ?, VALOR_UN = ?, VALOR_ABASTECIMENTO = ?, ID_Cartao = ?
+                WHERE ID = ?
+            """, (
+                data['data'],
+                data['condutor'],
+                data['hodometro'],
+                data['placa'],
+                data['combustivel'],
+                data['litros'],
+                data['valor_un'],
+                data['valor_abastecimento'],
+                data['id_cartao'],
+                id
+            ))
 
+        conn.commit()
+        conn.close()
+        return jsonify({"mensagem": "Abastecimento atualizado com sucesso!"})
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
+@app.route('/Veiculos.html')
+def veiculos_html():
+    return render_template('Veiculos.html')
 
+# APLICAÇÃO ABAIXO É REFERENTE A PAGINA "CARTÕES"----------------------------------------------------------------
+
+@app.route('/salvar-cartao', methods=['POST'])
+def salvar_cartao():
+    try:
+        data = request.get_json()
+        placa = data.get('placa_cartao')
+        marca = data.get('marca')
+        base = data.get('base')
+        centro_custo = data.get('centro_custo')
+        status = data.get('status')
+
+        # Conecte ao banco e insira os dados
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO dbo.tab_cartao (PLACA_CARTAO, MARCA, BASE, CENTRO_CUSTO, STATUS)
+            VALUES (?, ?, ?, ?, ?)
+        """, (placa, marca, base, centro_custo, status))
+        conn.commit()
+        conn.close()
+
+        return jsonify({'message': 'Cartão salvo com sucesso!'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Erro ao salvar: {str(e)}'}), 500
+
+@app.route('/api/solicitacoes-pendentes')
+def api_solicitacoes_pendentes():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT DATA_SOLICITACAO, PLACA_CARTAO, BASE, MARCA, CENTRO_CUSTO, STATUS
+        FROM dbo.tab_cartao
+        WHERE STATUS = 'Pendente'
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    result = []
+    for row in rows:
+        result.append({
+            "data_solicitacao": row.DATA_SOLICITACAO.strftime('%d/%m/%Y') if hasattr(row.DATA_SOLICITACAO, 'strftime') else str(row.DATA_SOLICITACAO),
+            "placa_cartao": row.PLACA_CARTAO,
+            "base": row.BASE,
+            "marca": row.MARCA,
+            "centro_custo": row.CENTRO_CUSTO,
+            "status": row.STATUS
+        })
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)

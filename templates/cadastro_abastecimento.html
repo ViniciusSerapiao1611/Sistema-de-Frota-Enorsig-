@@ -195,32 +195,29 @@
     </div>
 
 
-    <!-- Modal de lançamento de abastecimento (exemplo de estrutura) -->
     <div id="modal-abastecimento" class="modal-abastecimento">
-        <div class="modal-header">
+        <form>
             <span class="fechar-modal-abastecimento" onclick="fecharModalAbastecimento()">&times;</span>
-        </div>
-        <div class="modal-content">
-            <form class="form-abastecimento" id="form-abastecimento">
-                <label>Tipo de combustível</label>
-                <select id="tipo-combustivel" name="combustivel">
-                    <option>Gasolina</option>
-                    <option>Diesel</option>
-                    <option>Álcool</option>
-                </select>
-                <label>Hodômetro abastecido</label>
-                <input type="number" id="hodometro-abastecido">
-                <label>Foto do comprovante</label>
-                <input type="file" id="foto-comprovante">
-                <label>R$ Unitário</label>
-                <input type="number" id="valor-unitario" step="00.01">
-                <label>Litros</label>
-                <input type="number" id="litros" step="00.01">
-                <label>Total</label>
-                <input type="number" id="valor-total" step="0.01" readonly>
-                <button type="submit">Salvar</button>
-            </form>
-        </div>
+            <label>Placa</label>
+            <input type="text" id="placa" value="ABC1D23" readonly>
+            <label>Tipo de combustível</label>
+            <select id="tipo-combustivel">
+                <option>Gasolina</option>
+                <option>Diesel</option>
+                <option>Álcool</option>
+            </select>
+            <label>Hodômetro abastecido</label>
+            <input type="number" id="hodometro-abastecido">
+            <label>Foto do comprovante</label>
+            <input type="file" id="foto-comprovante">
+            <label>R$ Unitário</label>
+            <input type="number" id="valor-unitario" step="0.01">
+            <label>Litros</label>
+            <input type="number" id="litros" step="0.01">
+            <label>Total</label>
+            <input type="number" id="valor-total" step="0.01" readonly>
+            <button type="submit">Salvar</button>
+        </form>
     </div>
 
     <!-- Tabela de abastecimentos -->

@@ -1,27 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EnorFrota</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/relatorio.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/relatorio.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
-
 <body>
     <!-- Botão de alternância de modo escuro -->
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
-    </div>
-
-    <!-- Barra lateral -->
-    <!-- Botões de menu e modo escuro -->
-    <button class="menu-toggle" onclick="alternarMenu()">☰ Menu</button>
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
     </div>
 
     <!-- Barra lateral -->
@@ -82,7 +71,7 @@
 
         <div class="informacoes-usuario">
             <div class="avatar-usuario">
-                <img src="img/avatar.jpg" alt="Foto do Usuário">
+                <img src="{{ url_for('static', filename='img/avatar.jpg') }}" alt="Foto do Usuário">
             </div>
             <div class="detalhes-usuario">
                 <p>{{session.user_name}}</p>
@@ -137,6 +126,14 @@
                         <option value="CC8">610</option>
                     </select>
                 </div>
+                <div>
+                    <label for="data-inicio">Data Início</label>
+                    <input type="date" id="data-inicio">
+                </div>
+                <div>
+                    <label for="data-final">Data Final</label>
+                    <input type="date" id="data-final">
+                </div>
                 <div class="botoes">
                     <button>Filtrar</button>
                     <button>Limpar</button>
@@ -147,57 +144,38 @@
             <table id="tabelaPrincipal">
                 <thead>
                     <tr>
-                        <th>Centro Custo</th>
+                        <th>ID</th>
+                        <th>Centro de Custo</th>
                         <th>Data</th>
                         <th>Nome</th>
                         <th>Placa</th>
                         <th>Base</th>
-                        <th>Hodometro Inicial</th>
-                        <th>Hodometro Final</th>
+                        <th>Hodômetro Inicial</th>
+                        <th>Hodômetro Final</th>
                         <th>Total</th>
-                        <th>Placa Cartão</th>
-                        <th>Local Inicial</th>
-                        <th>Local Final</th>
+                        <th>ID Cartão</th>
+                        <th class="ocultar-coluna">Local Inicial</th>
+                        <th class="ocultar-coluna">Local Final</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for relatorio in relatorios %}
-                    <tr>
-                        <td>{{ relatorio.centro_custo }}</td>
-                        <td>{{ relatorio.data }}</td>
-                        <td>{{ relatorio.nome }}</td>
-                        <td>{{ relatorio.placa }}</td>
-                        <td>{{ relatorio.base }}</td>
-                        <td>{{ relatorio.hodometro_inicial }}</td>
-                        <td>{{ relatorio.hodometro_final }}</td>
-                        <td>{{ relatorio.total }}</td>
-                        <td>{{ relatorio.id_cartao }}</td>
-                        <td>{{ relatorio.local_inicial }}</td>
-                        <td>{{ relatorio.local_final }}</td>
-                        <td>
-                            <span class="acoes-tabela">
-                                <i class="fas fa-edit btn-acao editar" title="Editar" onclick="abrirModal(this)"></i>
-                                <i class="fas fa-file-pdf btn-acao pdf" title="Relatório"
-                                    onclick="gerarRelatorio(this)"></i>
-                            </span>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    
                 </tbody>
             </table>
         </div>
+        <div id="resultadoTotalKm"></div>
     </div>
     <div id="modal" class="modal">
         <div class="conteudo-modal">
             <span class="fechar" onclick="fecharModal()">&times;</span>
             <h2>Editar Registro</h2>
             <div class="layout-modal">
-                <!-- Dados do Registro conforme a tabela SQL -->
+                <!-- Dados da Viagem -->
                 <div class="dados-viagem">
                     <h3>Dados da Viagem</h3>
                     <div class="grupo-formulario">
-                        <label for="modal-centro-custo">Centro Custo *</label>
+                        <label for="modal-centro-custo">Centro de Custo *</label>
                         <input type="text" id="modal-centro-custo" placeholder="Digite o centro de custo" required>
                     </div>
                     <div class="grupo-formulario">
@@ -217,23 +195,24 @@
                         <input type="text" id="modal-base" placeholder="Digite a base" required>
                     </div>
                     <div class="grupo-formulario">
-                        <label for="modal-placa-cartao">Placa Cartão *</label>
-                        <input type="text" id="modal-placa-cartao" placeholder="Digite a placa do cartão" required>
+                        <label for="modal-id-cartao">ID Cartão *</label>
+                        <input type="text" id="modal-id-cartao" placeholder="Digite o ID do cartão" required>
                     </div>
                 </div>
+                <!-- Dados de Destino -->
                 <div class="dados-destino">
                     <h3>Dados de Destino</h3>
                     <div class="grupo-formulario">
-                        <label for="modal-hod-inicial">Hodometro Inicial *</label>
-                        <input type="number" id="modal-hod-inicial" placeholder="KM inicial" required>
+                        <label for="modal-hodometro-inicial">Hodômetro Inicial *</label>
+                        <input type="number" id="modal-hodometro-inicial" placeholder="KM inicial" required>
                     </div>
                     <div class="grupo-formulario">
-                        <label for="modal-hod-final">Hodometro Final *</label>
-                        <input type="number" id="modal-hod-final" placeholder="KM final" required>
+                        <label for="modal-hodometro-final">Hodômetro Final *</label>
+                        <input type="number" id="modal-hodometro-final" placeholder="KM final" required>
                     </div>
                     <div class="grupo-formulario">
                         <label for="modal-total">Total *</label>
-                        <input type="number" id="modal-total" placeholder="Total KM" required>
+                        <input type="number" id="modal-total" placeholder="Total KM" readonly>
                     </div>
                     <div class="grupo-formulario">
                         <label for="modal-local-inicial">Local Inicial *</label>
@@ -274,12 +253,13 @@
                 <table id="tabelaRelatorio">
                     <thead>
                         <tr>
+                            <th class="ocultar-coluna">ID</th>
                             <th>ID CENTRO DE CUSTO</th>
                             <th>DATA</th>
                             <th>MOTORISTA</th>
                             <th>PLACA VEÍCULO</th>
                             <th>ID CARTÃO</th>
-                            <th>BASE</th>
+                            <th>BASE</th> 
                             <th>DESTINO</th>
                             <th>KM SAÍDA</th>
                             <th>KM CHEGADA</th>
@@ -303,54 +283,93 @@
                 </table>
             </div>
             <!-- Adicione este elemento dentro do modalRelatorio -->
-            <div id="resultadoTotalKm"
-                style="margin-top: 20px; text-align: center; font-size: 1.2rem; font-weight: bold; color: #4CAF50; background: #f9f9f9; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+            <div id="resultadoTotalKm" style="margin-top: 20px; text-align: center; font-size: 1.2rem; font-weight: bold; color: #4CAF50; background: #f9f9f9; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                 <!-- O total será exibido aqui -->
             </div>
         </div>
     </div>
     <script>
-        let linhaAtual; // Variável para armazenar a linha atual sendo editada
+        let linhaAtual = null;
 
-        function abrirModal(botao) {
-            const linha = botao.closest("tr");
+        // Função para abrir o modal de edição e preencher os campos
+        function editarRelatorio(id) {
+            const linhas = document.querySelectorAll('#tabelaPrincipal tbody tr');
+            let linha = null;
+            linhas.forEach(l => {
+                if (l.cells[0].textContent == id) {
+                    linha = l;
+                }
+            });
+            if (!linha) return;
+
             linhaAtual = linha;
 
-            document.getElementById("modal-centro-custo").value = linha.cells[0].textContent.trim();
-            document.getElementById("modal-data").value = linha.cells[1].textContent.trim();
-            document.getElementById("modal-nome").value = linha.cells[2].textContent.trim();
-            document.getElementById("modal-placa").value = linha.cells[3].textContent.trim();
-            document.getElementById("modal-base").value = linha.cells[4].textContent.trim();
-            document.getElementById("modal-hod-inicial").value = linha.cells[5].textContent.trim();
-            document.getElementById("modal-hod-final").value = linha.cells[6].textContent.trim();
-            document.getElementById("modal-total").value = linha.cells[7].textContent.trim();
-            document.getElementById("modal-placa-cartao").value = linha.cells[8].textContent.trim();
-            document.getElementById("modal-local-inicial").value = linha.cells[9].textContent.trim();
-            document.getElementById("modal-local-final").value = linha.cells[10].textContent.trim();
+            // Preenche os campos do modal com os dados da linha
+            document.getElementById("modal-centro-custo").value = linha.cells[1].textContent.trim();
+            document.getElementById("modal-data").value = linha.cells[2].textContent.trim();
+            document.getElementById("modal-nome").value = linha.cells[3].textContent.trim();
+            document.getElementById("modal-placa").value = linha.cells[4].textContent.trim();
+            document.getElementById("modal-base").value = linha.cells[5].textContent.trim();
+            document.getElementById("modal-hodometro-inicial").value = linha.cells[6].textContent.trim();
+            document.getElementById("modal-hodometro-final").value = linha.cells[7].textContent.trim();
+            document.getElementById("modal-total").value = linha.cells[8].textContent.trim();
+            document.getElementById("modal-id-cartao").value = linha.cells[9].textContent.trim();
+            document.getElementById("modal-local-inicial").value = linha.cells[10].textContent.trim();
+            document.getElementById("modal-local-final").value = linha.cells[11].textContent.trim();
 
             document.getElementById("modal").style.display = "block";
         }
 
+        // Função para fechar o modal
         function fecharModal() {
             document.getElementById("modal").style.display = "none";
         }
 
+        // Função para salvar a edição no banco de dados e atualizar a tabela na tela
         function salvarEdicao() {
             if (!linhaAtual) return;
 
-            linhaAtual.cells[0].textContent = document.getElementById("modal-centro-custo").value;
-            linhaAtual.cells[1].textContent = document.getElementById("modal-data").value;
-            linhaAtual.cells[2].textContent = document.getElementById("modal-nome").value;
-            linhaAtual.cells[3].textContent = document.getElementById("modal-placa").value;
-            linhaAtual.cells[4].textContent = document.getElementById("modal-base").value;
-            linhaAtual.cells[5].textContent = document.getElementById("modal-hod-inicial").value;
-            linhaAtual.cells[6].textContent = document.getElementById("modal-hod-final").value;
-            linhaAtual.cells[7].textContent = document.getElementById("modal-total").value;
-            linhaAtual.cells[8].textContent = document.getElementById("modal-placa-cartao").value;
-            linhaAtual.cells[9].textContent = document.getElementById("modal-local-inicial").value;
-            linhaAtual.cells[10].textContent = document.getElementById("modal-local-final").value;
+            const id = linhaAtual.cells[0].textContent;
 
-            fecharModal();
+            const dados = {
+                centro_custo: document.getElementById("modal-centro-custo").value,
+                data: document.getElementById("modal-data").value,
+                nome: document.getElementById("modal-nome").value,
+                placa: document.getElementById("modal-placa").value,
+                base: document.getElementById("modal-base").value,
+                hodometro_inicial: document.getElementById("modal-hodometro-inicial").value,
+                hodometro_final: document.getElementById("modal-hodometro-final").value,
+                total: document.getElementById("modal-total").value,
+                id_cartao: document.getElementById("modal-id-cartao").value,
+                local_inicial: document.getElementById("modal-local-inicial").value,
+                local_final: document.getElementById("modal-local-final").value
+            };
+
+            fetch(`http://127.0.0.1:5000/api/relatorios/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            })
+            .then(res => res.json())
+            .then(resposta => {
+                if (resposta.mensagem) {
+                    linhaAtual.cells[1].textContent = dados.centro_custo;
+                    linhaAtual.cells[2].textContent = dados.data;
+                    linhaAtual.cells[3].textContent = dados.nome;
+                    linhaAtual.cells[4].textContent = dados.placa;
+                    linhaAtual.cells[5].textContent = dados.base;
+                    linhaAtual.cells[6].textContent = dados.hodometro_inicial;
+                    linhaAtual.cells[7].textContent = dados.hodometro_final;
+                    linhaAtual.cells[8].textContent = dados.total;
+                    linhaAtual.cells[9].textContent = dados.id_cartao;
+                    linhaAtual.cells[10].textContent = dados.local_inicial;
+                    linhaAtual.cells[11].textContent = dados.local_final;
+                    fecharModal();
+                } else {
+                    alert('Erro ao salvar: ' + (resposta.erro || 'Erro desconhecido'));
+                }
+            })
+            .catch(() => alert('Erro ao salvar no servidor!'));
         }
 
         function gerarRelatorio(botao) {
@@ -368,12 +387,11 @@
                     html += `
                         <tr>
                             <td>${l.cells[1].textContent}</td>
-                            <td>${l.cells[2].textContent}</td>
-                            <td>${l.cells[3].textContent}</td>
+                            <td><span class="nome-cinza">${r.nome}</span></td>
+                            <td>${formatarDataBR(r.data)}</td>
                             <td>${l.cells[8].textContent}</td>
                             <td>${l.cells[4].textContent}</td>
-                            <td>${l.cells[10].textContent}</td>
-                            <td>${l.cells[5].textContent}</td>
+                            <td><span class="base-azul-claro">${r.base}</span></td>
                             <td>${l.cells[6].textContent}</td>
                             <td>${l.cells[7].textContent}</td>
                         </tr>
@@ -392,9 +410,48 @@
             document.getElementById("modalRelatorio").style.display = "none";
         }
 
-        function filtrarRelatorio() {
-            // Implementação futura após conexão com SQL
-            document.getElementById("resultadoTotalKm").innerHTML = `<span>Filtro disponível após integração com banco de dados.</span>`;
+        async function filtrarRelatorio() {
+            const dataInicio = document.getElementById("filtro-data-inicio").value;
+            const dataFinal = document.getElementById("filtro-data-final").value;
+
+            // Pega o nome do motorista do relatório (ajuste o índice se necessário)
+            const linhas = document.querySelectorAll("#tabelaRelatorioMotorista tr");
+            let totalKm = 0;
+            let nomeMotorista = "";
+            linhas.forEach(linha => {
+                const data = linha.cells[0]?.textContent?.trim();
+                const nome = linha.cells[1]?.textContent?.trim();
+                const km = parseFloat(linha.cells[8]?.textContent) || 0;
+
+                // Filtro por data (formato yyyy-mm-dd)
+                if (data && dataInicio && data < dataInicio) return;
+                if (data && dataFinal && data > dataFinal) return;
+
+                totalKm += km;
+                if (!nomeMotorista) nomeMotorista = nome;
+            });
+
+            // Buscar abastecimentos do motorista no período
+            let totalLitros = 0;
+            if (nomeMotorista && dataInicio && dataFinal) {
+                const url = `http://127.0.0.1:5000/api/abastecimentos?condutor=${encodeURIComponent(nomeMotorista)}&data_inicio=${dataInicio}&data_final=${dataFinal}`;
+                try {
+                    const resp = await fetch(url);
+                    const abastecimentos = await resp.json();
+                    abastecimentos.forEach(a => {
+                        totalLitros += parseFloat(a.litros) || 0;
+                    });
+                } catch (e) {
+                    totalLitros = 0;
+                }
+            }
+
+            let media = totalLitros > 0 ? (totalKm / totalLitros).toFixed(2) : 'N/A';
+
+            document.getElementById("resultadoTotalKm").innerHTML = `
+                <i class="fas fa-tachometer-alt"></i> Total no período: <b style="color:#1e7e34;font-size:1.3em">${totalKm} km</b><br>
+                <i class="fas fa-gas-pump"></i> Média por litro: <b style="color:#007bff;font-size:1.3em">${media} km/l</b>
+            `;
         }
 
         function limparFiltro() {
@@ -403,7 +460,7 @@
             document.getElementById("resultadoTotalKm").innerHTML = "";
         }
 
-        window.onclick = function (evento) {
+        window.onclick = function(evento) {
             const modal = document.getElementById("modal");
             const modalRelatorio = document.getElementById("modalRelatorio");
             if (evento.target === modal) fecharModal();
@@ -426,32 +483,50 @@
         }
 
         function filtrarTabelaPrincipal() {
-            const motoristaFiltro = document.getElementById("pesquisar").value.toLowerCase();
-            const placaFiltro = document.getElementById("placa-veiculo").value.toLowerCase();
-            const placaCartaoFiltro = document.getElementById("placa-cartao").value.toLowerCase();
-            const baseFiltro = document.getElementById("base").value.toLowerCase();
-            const ccFiltro = document.getElementById("centro-custo").value.toLowerCase();
+            // Pegando os valores dos filtros
+            const motoristaFiltro = document.getElementById("pesquisar").value.trim().toLowerCase();
+            const placaFiltro = document.getElementById("placa-veiculo").value.trim().toLowerCase();
+            const placaCartaoFiltro = document.getElementById("placa-cartao").value.trim().toLowerCase();
+            const baseFiltro = document.getElementById("base").value;
+            const centroCustoFiltro = document.getElementById("centro-custo").value;
+            const dataInicio = document.getElementById("data-inicio").value;
+            const dataFinal = document.getElementById("data-final").value;
 
-            const linhas = document.querySelectorAll(".tabela-scroll tbody tr");
+            let totalKm = 0;
+            const mostrarSoma = dataInicio || dataFinal;
+
+            const linhas = document.querySelectorAll("#tabelaPrincipal tbody tr");
             linhas.forEach(linha => {
-                const motorista = linha.cells[2].textContent.toLowerCase();
-                const placa = linha.cells[3].textContent.toLowerCase();
-                const placaCartao = linha.cells[4].textContent.toLowerCase();
-                const base = linha.cells[5].textContent.toLowerCase();
+                // Pegando os valores das células
+                const nome = linha.cells[3].textContent.trim().toLowerCase();
+                const placa = linha.cells[4].textContent.trim().toLowerCase();
+                const base = linha.cells[5].textContent.trim();
+                const centroCusto = linha.cells[1].textContent.trim();
+                const placaCartao = linha.cells[9].textContent.trim().toLowerCase();
+                const dataISO = linha.cells[2].textContent.trim().split('/').reverse().join('-'); // dd/mm/yyyy para yyyy-mm-dd
+                const total = parseFloat(linha.cells[8].textContent) || 0;
 
                 let mostrar = true;
-                if (motoristaFiltro && !motorista.includes(motoristaFiltro)) mostrar = false;
+                if (motoristaFiltro && !nome.includes(motoristaFiltro)) mostrar = false;
                 if (placaFiltro && !placa.includes(placaFiltro)) mostrar = false;
                 if (placaCartaoFiltro && !placaCartao.includes(placaCartaoFiltro)) mostrar = false;
-                if (baseFiltro && baseFiltro !== "escolha a base" && !base.includes(baseFiltro)) mostrar = false;
+                if (baseFiltro && baseFiltro !== "Escolha a Base" && base !== document.querySelector(`#base option[value="${baseFiltro}"]`)?.textContent) mostrar = false;
+                if (centroCustoFiltro && centroCustoFiltro !== "Escolha o CC" && centroCusto !== document.querySelector(`#centro-custo option[value="${centroCustoFiltro}"]`)?.textContent) mostrar = false;
+                if (dataInicio && dataISO < dataInicio) mostrar = false;
+                if (dataFinal && dataISO > dataFinal) mostrar = false;
 
                 linha.style.display = mostrar ? "" : "none";
+                if (mostrar && mostrarSoma) totalKm += total;
             });
+
+            document.getElementById("resultadoTotalKm").innerHTML = mostrarSoma
+                ? `<i class="fas fa-tachometer-alt"></i> Total no período: <b style="color:#1e7e34;font-size:1.3em">${totalKm} km</b>`
+                : '';
         }
 
         document.querySelector('.botoes button').onclick = filtrarTabelaPrincipal;
 
-        document.querySelectorAll('.botoes button')[1].onclick = function () {
+        document.querySelectorAll('.botoes button')[1].onclick = function() {
             document.getElementById("pesquisar").value = "";
             document.getElementById("placa-veiculo").value = "";
             document.getElementById("placa-cartao").value = "";
@@ -461,8 +536,63 @@
             linhas.forEach(linha => {
                 linha.style.display = "";
             });
+            document.getElementById("resultadoTotalKm").innerHTML = '';
         };
+
+        function carregarRelatorios() {
+            fetch('http://127.0.0.1:5000/api/relatorios')
+                .then(res => res.json())
+                .then(relatorios => {
+                    const tbody = document.querySelector('#tabelaPrincipal tbody');
+                    tbody.innerHTML = '';
+                    relatorios.forEach(r => {
+                        const tr = document.createElement('tr');
+                        const totalValor = Number(r.total);
+                        const totalClasse = totalValor < 0 ? 'total-vermelho' : 'total-verde';
+
+                        tr.innerHTML = `
+                            <td>${r.id}</td>
+                            <td>${r.centro_custo}</td>
+                            <td>${formatarDataBR(r.data)}</td>
+                            <td><span class="nome-cinza">${r.nome}</span></td>
+                            <td>${r.placa}</td>
+                            <td><span class="base-azul-claro">${r.base}</span></td>
+                            <td>${r.hodometro_inicial}</td>
+                            <td>${r.hodometro_final}</td>
+                            <td><span class="${totalClasse}">${r.total}</span></td>
+                            <td>${r.id_cartao}</td>
+                            <td class="ocultar-coluna">${r.local_inicial}</td>
+                            <td class="ocultar-coluna">${r.local_final}</td>
+                            <td>
+                                <i class="fas fa-edit" style="color:#007bff; cursor:pointer;" title="Editar" onclick="editarRelatorio(${r.id})"></i>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }
+
+        // Chame ao carregar a página
+        document.addEventListener('DOMContentLoaded', carregarRelatorios);
+
+        // Função para atualizar o campo Total automaticamente
+        function atualizarTotalModal() {
+            const inicial = parseFloat(document.getElementById("modal-hodometro-inicial").value) || 0;
+            const final = parseFloat(document.getElementById("modal-hodometro-final").value) || 0;
+            const total = final - inicial;
+            document.getElementById("modal-total").value = total >= 0 ? total : 0;
+        }
+
+        // Adiciona o evento nos campos
+        document.getElementById("modal-hodometro-inicial").addEventListener('input', atualizarTotalModal);
+        document.getElementById("modal-hodometro-final").addEventListener('input', atualizarTotalModal);
+
+        function formatarDataBR(dataISO) {
+            if (!dataISO) return '';
+            const partes = dataISO.split('-');
+            if (partes.length !== 3) return dataISO;
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
     </script>
 </body>
-
 </html>

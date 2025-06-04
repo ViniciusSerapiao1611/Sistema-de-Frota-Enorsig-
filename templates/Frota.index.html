@@ -30,8 +30,8 @@
       <form method="POST" action="{{ url_for('login') }}" class="mx-auto" style="max-width: 400px;">
         <div class="login-box">
           <img src="{{url_for('static', filename='img/logo_enorsul.png')}}" alt="Logo" class="logo">
-          <input type="text" placeholder="E-mail*" name="emaillogin" />
-          <input type="password" placeholder="Senha*" name="password" />
+          <input type="text" placeholder="E-mail*" name="emaillogin" required/>
+          <input type="password" placeholder="Senha*" name="password" required/>
           <div class="opcoes">
             <label><input type="checkbox"> Lembrar</label>
             <a id="linkRecuperar">Esqueci a senha</a>

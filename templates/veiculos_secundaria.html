@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Veículos - EnorFrota</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/veiculos_secundarira.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/veiculos_secundario.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/veiculos_secundarira.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/veiculos_secundario.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
     <style>
         .status-btn.selecionado {
@@ -193,6 +193,52 @@
                     <input type="hidden" id="Status" name="Status" value="ativo">
                 </div>
             </div>
+                        <!-- Solicitação de Cartão -->
+            <div class="container">
+                <h3>Solicitação de Cartão</h3>
+                <div class="status-group">
+                    <button type="button" class="status-btn sim" onclick="selecionarSolicitacaoCartao('sim')">
+                        <i class="fas fa-credit-card"></i> Sim
+                    </button>
+                    <button type="button" class="status-btn nao" onclick="selecionarSolicitacaoCartao('nao')">
+                        <i class="fas fa-times-circle"></i> Não
+                    </button>
+                    <input type="hidden" id="SolicitacaoCartao" name="SolicitacaoCartao" value="nao">
+                </div>
+                <div id="campos-cartao" style="display: none; margin-top: 15px;">
+                    <div class="form-group">
+                        <div>
+                            <label for="PlacaCartao">Placa Cartão *</label>
+                            <input type="text" id="PlacaCartao" name="PlacaCartao" readonly>
+                        </div>
+                        <div>
+                            <label for="MarcaCartao">Marca *</label>
+                            <input type="text" id="MarcaCartao" name="MarcaCartao" readonly>
+                        </div>
+                        <div>
+                            <label for="BaseCartao">Base *</label>
+                            <select id="BaseCartao" name="BaseCartao">
+                                <option value="">Selecione</option>
+                                <option value="Campo Grande">Campo Grande</option>
+                                <option value="Dourados">Dourados</option>
+                                <option value="Três Lagoas">Três Lagoas</option>
+                                <option value="Corumbá">Corumbá</option>
+                                <option value="Naviraí">Naviraí</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="CentroCustoCartao">Centro de Custo *</label>
+                            <input type="text" id="CentroCustoCartao" name="CentroCustoCartao">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <label for="StatusCartao">Status do Cartão</label>
+                            <input type="text" id="StatusCartao" name="StatusCartao" value="Pendente" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Botões -->
             <div class="form-actions" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                 <button type="button" class="btn-cancelar"
@@ -220,124 +266,210 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Modo escuro
-            const isDarkMode = localStorage.getItem('modoEscuro') === 'true';
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-            }
+    document.addEventListener('DOMContentLoaded', () => {
+        // Modo escuro
+        const isDarkMode = localStorage.getItem('modoEscuro') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        }
 
-            // Cadastro de veículo (único listener, sem duplicidade)
-            const form = document.getElementById("form-veiculo");
-            if (form) {
-                form.addEventListener("submit", async function (event) {
-                    event.preventDefault();
+        // Cadastro de veículo e cartão juntos
+        const form = document.getElementById("form-veiculo");
+        if (form) {
+            form.addEventListener("submit", async function(event) {
+                event.preventDefault();
 
-                    const dados = {
-                        Marca: document.getElementById("Marca").value,
-                        Modelo: document.getElementById("Modelo").value,
-                        Ano: document.getElementById("Ano").value,
-                        Renavam: document.getElementById("Renavam").value,
-                        Placa: document.getElementById("Placa").value,
-                        Tipo_combustivel: document.getElementById("Tipo_combustivel").value,
-                        Hodometro_inicial: document.getElementById("Hodometro_inicial").value,
-                        Motorista: document.getElementById("Motorista").value,
-                        Tipo_Locacao: document.getElementById("Tipo_Locacao").value,
-                        Documento: document.getElementById("Documento").files[0] ? document.getElementById("Documento").files[0].name : "",
-                        Status: document.getElementById("Status").value
+                // Dados do veículo
+                const veiculo = {
+                    MARCA: document.getElementById("Marca").value,
+                    MODELO: document.getElementById("Modelo").value,
+                    ANO: document.getElementById("Ano").value,
+                    RENAVAM: document.getElementById("Renavam").value,
+                    PLACA: document.getElementById("Placa").value,
+                    TIPO_COMBUSTIVEL: document.getElementById("Tipo_combustivel").value,
+                    HODOMETRO_INICIAL: document.getElementById("Hodometro_inicial").value,
+                    CONDUTOR: document.getElementById("Motorista").value,
+                    TIPO_LOCACAO: document.getElementById("Tipo_Locacao").value,
+                    DOCUMENTO: document.getElementById("Documento").files[0] ? document.getElementById("Documento").files[0].name : "",
+                    STATUS: document.getElementById("Status").value
+                };
+
+                // Dados do cartão (se solicitado)
+                let cartao = null;
+                if (document.getElementById('SolicitacaoCartao').value === 'sim') {
+                    cartao = {
+                        placa_cartao: document.getElementById('PlacaCartao').value,
+                        marca: document.getElementById('MarcaCartao').value,
+                        base: document.getElementById('BaseCartao').value,
+                        centro_custo: document.getElementById('CentroCustoCartao').value,
+                        status: document.getElementById('StatusCartao').value,
                     };
+                }
 
-                    const resposta = await fetch('http://127.0.0.1:5000/api/veiculos', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(dados)
-                    });
-
-                    if (resposta.ok) {
-                        alert('Veículo cadastrado com sucesso!');
-                        window.location.href = '{{url_for('veiculos')}}';
-                    } else {
-                        const erro = await resposta.json();
-                        alert('Erro ao cadastrar: ' + erro.erro);
-                    }
+                // Envia tudo junto
+                const resposta = await fetch('/api/veiculo-cartao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ veiculo, cartao })
                 });
+
+                if (resposta.ok) {
+                    alert('Dados salvos com sucesso!');
+                    window.location.href = 'Veiculos.html';
+                } else {
+                    const erro = await resposta.json();
+                    alert('Erro ao salvar: ' + erro.erro);
+                }
+            });
+        }
+
+        const statusAtual = document.getElementById('Status').value;
+        selecionarStatus(statusAtual);
+    });
+
+    // Função para selecionar status visualmente e no input hidden
+    function selecionarStatus(status) {
+        document.getElementById('Status').value = status;
+        // Remove classe 'selecionado' de todos os botões
+        document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('selecionado'));
+        // Adiciona classe 'selecionado' ao botão clicado
+        document.querySelector(`.status-btn.${status}`)?.classList.add('selecionado');
+    }
+
+    // Função para selecionar solicitação de cartão visualmente e no input hidden
+    function selecionarSolicitacaoCartao(valor) {
+        document.getElementById('SolicitacaoCartao').value = valor;
+        document.querySelectorAll('.status-btn.sim, .status-btn.nao').forEach(btn => btn.classList.remove('selecionado'));
+        document.querySelector(`.status-btn.${valor}`)?.classList.add('selecionado');
+        const campos = document.getElementById('campos-cartao');
+        const baseCartao = document.getElementById('BaseCartao');
+        const placaCartao = document.getElementById('PlacaCartao');
+        const marcaCartao = document.getElementById('MarcaCartao');
+        const statusCartao = document.getElementById('StatusCartao');
+        if (valor === 'sim') {
+            // Preencher automaticamente Placa e Marca
+            placaCartao.value = document.getElementById('Placa').value;
+            marcaCartao.value = document.getElementById('Marca').value;
+            campos.style.display = 'block';
+            // Torna os campos obrigatórios
+            baseCartao.required = true;
+            placaCartao.required = true;
+            marcaCartao.required = true;
+            statusCartao.required = true;
+        } else {
+            campos.style.display = 'none';
+            // Remove obrigatoriedade
+            baseCartao.required = false;
+            placaCartao.required = false;
+            marcaCartao.required = false;
+            statusCartao.required = false;
+        }
+    }
+
+    // Atualizar PlacaCartao e MarcaCartao ao digitar/selecionar nos campos principais
+    document.getElementById('Placa').addEventListener('input', function() {
+        if (document.getElementById('SolicitacaoCartao').value === 'sim') {
+            document.getElementById('PlacaCartao').value = this.value;
+        }
+    });
+    document.getElementById('Marca').addEventListener('input', function() {
+        if (document.getElementById('SolicitacaoCartao').value === 'sim') {
+            document.getElementById('MarcaCartao').value = this.value;
+        }
+    });
+
+    // Adiciona o listener para salvar os dados do cartão
+document.addEventListener('DOMContentLoaded', () => {
+    // ...outros códigos...
+
+    // Adiciona o evento apenas se o botão existir
+    const btnSalvar = document.querySelector('.btn-salvar');
+    if (btnSalvar) {
+        btnSalvar.addEventListener('click', function(e) {
+            // Só executa se o campo de solicitação de cartão estiver visível e selecionado como 'sim'
+            if (document.getElementById('SolicitacaoCartao').value === 'sim') {
+                e.preventDefault(); // evita submit tradicional
+
+                const data = {
+                    placa_cartao: document.getElementById('PlacaCartao').value,
+                    marca: document.getElementById('MarcaCartao').value,
+                    base: document.getElementById('BaseCartao').value,
+                    centro_custo: document.getElementById('CentroCustoCartao').value, // <-- adicionado aqui
+                    status: document.getElementById('StatusCartao').value,
+                };
+
+                fetch('/salvar-cartao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                })
+                .then(res => res.json())
+                .then(response => alert(response.message))
+                .catch(() => alert('Erro ao salvar os dados.'));
             }
-
-            const statusAtual = document.getElementById('Status').value;
-            selecionarStatus(statusAtual);
+            // Se não for solicitação de cartão, deixa o submit normal acontecer
         });
+    }
+});
 
-        // Função para selecionar status visualmente e no input hidden
-        function selecionarStatus(status) {
-            document.getElementById('Status').value = status;
-            // Remove classe 'selecionado' de todos os botões
-            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('selecionado'));
-            // Adiciona classe 'selecionado' ao botão clicado
-            document.querySelector(`.status-btn.${status}`)?.classList.add('selecionado');
-        }
+    // Funções utilitárias e de interface, sem integração com SQL/backend
 
-        // As demais funções utilitárias e de UI (modal, máscara, validação de placa, etc.) podem permanecer abaixo normalmente.
-    </script>
+    // Modal e permissões
+    function abrirModal(botao) {
+        const linha = botao.closest('tr');
+        const colunas = linha.querySelectorAll('td');
+        document.getElementById('modal-nome-perfil').value = colunas[0].textContent.trim();
+        document.getElementById('modal-descricao-perfil').value = colunas[3].textContent.trim();
+        document.getElementById('modal-status-perfil').value = colunas[2].textContent.trim().toLowerCase();
+        document.getElementById('modal-permissao-estoque-visualizar').checked = true;
+        document.getElementById('modal-permissao-estoque-editar').checked = false;
+        document.getElementById('modal-permissao-estoque-excluir').checked = true;
+        document.getElementById('modal-editar').style.display = 'flex';
+    }
 
-    <script>
-        // Funções utilitárias e de interface, sem integração com SQL/backend
+    function fecharModal() {
+        document.getElementById('modal-editar').style.display = 'none';
+    }
 
-        // Modal e permissões
-        function abrirModal(botao) {
-            const linha = botao.closest('tr');
-            const colunas = linha.querySelectorAll('td');
-            document.getElementById('modal-nome-perfil').value = colunas[0].textContent.trim();
-            document.getElementById('modal-descricao-perfil').value = colunas[3].textContent.trim();
-            document.getElementById('modal-status-perfil').value = colunas[2].textContent.trim().toLowerCase();
-            document.getElementById('modal-permissao-estoque-visualizar').checked = true;
-            document.getElementById('modal-permissao-estoque-editar').checked = false;
-            document.getElementById('modal-permissao-estoque-excluir').checked = true;
-            document.getElementById('modal-editar').style.display = 'flex';
-        }
+    function salvarPermissoes() {
+        const estoqueVisualizar = document.getElementById('modal-permissao-estoque-visualizar').checked;
+        const estoqueEditar = document.getElementById('modal-permissao-estoque-editar').checked;
+        const estoqueExcluir = document.getElementById('modal-permissao-estoque-excluir').checked;
+        console.log('Permissões Estoque:', { estoqueVisualizar, estoqueEditar, estoqueExcluir });
+    }
 
-        function fecharModal() {
-            document.getElementById('modal-editar').style.display = 'none';
-        }
-
-        function salvarPermissoes() {
-            const estoqueVisualizar = document.getElementById('modal-permissao-estoque-visualizar').checked;
-            const estoqueEditar = document.getElementById('modal-permissao-estoque-editar').checked;
-            const estoqueExcluir = document.getElementById('modal-permissao-estoque-excluir').checked;
-            console.log('Permissões Estoque:', { estoqueVisualizar, estoqueEditar, estoqueExcluir });
-        }
-
-        function inativarLinha(botao) {
-            const linha = botao.closest('tr');
-            linha.classList.add('linha-inativa');
-            const statusColuna = linha.querySelector('td:nth-child(3)');
-            if (statusColuna) statusColuna.textContent = 'Inativo';
-            const acoesColuna = linha.querySelector('td:last-child');
-            acoesColuna.innerHTML = `
+    function inativarLinha(botao) {
+        const linha = botao.closest('tr');
+        linha.classList.add('linha-inativa');
+        const statusColuna = linha.querySelector('td:nth-child(3)');
+        if (statusColuna) statusColuna.textContent = 'Inativo';
+        const acoesColuna = linha.querySelector('td:last-child');
+        acoesColuna.innerHTML = `
             <button class="botao-ativar" onclick="abrirModalConfirmacao(this)">
                 <i class="fas fa-check"></i> Ativar
             </button>
         `;
-        }
+    }
 
-        let linhaParaAtivar = null;
+    let linhaParaAtivar = null;
 
-        function abrirModalConfirmacao(botao) {
-            linhaParaAtivar = botao.closest('tr');
-            document.getElementById('modal-confirmar-ativacao').style.display = 'flex';
-        }
+    function abrirModalConfirmacao(botao) {
+        linhaParaAtivar = botao.closest('tr');
+        document.getElementById('modal-confirmar-ativacao').style.display = 'flex';
+    }
 
-        function fecharModalConfirmacao() {
-            linhaParaAtivar = null;
-            document.getElementById('modal-confirmar-ativacao').style.display = 'none';
-        }
+    function fecharModalConfirmacao() {
+        linhaParaAtivar = null;
+        document.getElementById('modal-confirmar-ativacao').style.display = 'none';
+    }
 
-        function confirmarAtivacao() {
-            if (linhaParaAtivar) {
-                linhaParaAtivar.classList.remove('linha-inativa');
-                const statusColuna = linhaParaAtivar.querySelector('td:nth-child(3)');
-                if (statusColuna) statusColuna.textContent = 'Ativo';
-                const acoesColuna = linhaParaAtivar.querySelector('td:last-child');
-                acoesColuna.innerHTML = `
+    function confirmarAtivacao() {
+        if (linhaParaAtivar) {
+            linhaParaAtivar.classList.remove('linha-inativa');
+            const statusColuna = linhaParaAtivar.querySelector('td:nth-child(3)');
+            if (statusColuna) statusColuna.textContent = 'Ativo';
+            const acoesColuna = linhaParaAtivar.querySelector('td:last-child');
+            acoesColuna.innerHTML = `
                 <button class="botao-editar" onclick="abrirModal(this)">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -345,41 +477,41 @@
                     <i class="fas fa-trash"></i>
                 </button>
             `;
-            }
-            fecharModalConfirmacao();
         }
+        fecharModalConfirmacao();
+    }
 
-        function voltarParaUsuariosPrincipal() {
+    function voltarParaUsuariosPrincipal() {
+        window.location.href = 'usuarios-principal.html';
+    }
+
+    function mostrarNotificacaoSalvo() {
+        const notificacao = document.createElement('div');
+        notificacao.textContent = 'Alterações salvas com sucesso!';
+        notificacao.style.position = 'fixed';
+        notificacao.style.top = '20px';
+        notificacao.style.left = '50%';
+        notificacao.style.transform = 'translateX(-50%)';
+        notificacao.style.backgroundColor = '#4CAF50';
+        notificacao.style.color = 'white';
+        notificacao.style.padding = '10px 20px';
+        notificacao.style.borderRadius = '5px';
+        notificacao.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.3)';
+        notificacao.style.zIndex = '1000';
+        document.body.appendChild(notificacao);
+        setTimeout(() => {
+            notificacao.remove();
             window.location.href = 'usuarios-principal.html';
-        }
+        }, 3000);
+    }
 
-        function mostrarNotificacaoSalvo() {
-            const notificacao = document.createElement('div');
-            notificacao.textContent = 'Alterações salvas com sucesso!';
-            notificacao.style.position = 'fixed';
-            notificacao.style.top = '20px';
-            notificacao.style.left = '50%';
-            notificacao.style.transform = 'translateX(-50%)';
-            notificacao.style.backgroundColor = '#4CAF50';
-            notificacao.style.color = 'white';
-            notificacao.style.padding = '10px 20px';
-            notificacao.style.borderRadius = '5px';
-            notificacao.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.3)';
-            notificacao.style.zIndex = '1000';
-            document.body.appendChild(notificacao);
-            setTimeout(() => {
-                notificacao.remove();
-                window.location.href = 'usuarios-principal.html';
-            }, 3000);
-        }
-
-        function atualizarDescricaoPermissao() {
-            const select = document.getElementById('permissao-acesso');
-            const descricaoContainer = document.getElementById('descricao-permissao');
-            if (!select || !descricaoContainer) return;
-            const nivelSelecionado = select.value;
-            const descricoes = {
-                admin: `🧑‍💻 <strong>Administrador</strong><br>
+    function atualizarDescricaoPermissao() {
+        const select = document.getElementById('permissao-acesso');
+        const descricaoContainer = document.getElementById('descricao-permissao');
+        if (!select || !descricaoContainer) return;
+        const nivelSelecionado = select.value;
+        const descricoes = {
+            admin: `🧑‍💻 <strong>Administrador</strong><br>
                     <ul>
                         <li>Acesso total a todas as páginas e funcionalidades</li>
                         <li>Cadastrar, editar e excluir:
@@ -396,7 +528,7 @@
                         <li>Gerenciar permissões dos demais usuários</li>
                         <li>Ver todos os dados da empresa</li>
                     </ul>`,
-                gestor: `👨‍💼 <strong>Gestor</strong><br>
+            gestor: `👨‍💼 <strong>Gestor</strong><br>
                     <ul>
                         <li>Visualizar e editar:
                             <ul>
@@ -410,7 +542,7 @@
                         <li>Exportar relatórios</li>
                         <li>Ver dados de todas as bases</li>
                     </ul>`,
-                controlador: `🧾 <strong>Controlador</strong><br>
+            controlador: `🧾 <strong>Controlador</strong><br>
                     <ul>
                         <li>Registrar e editar abastecimentos</li>
                         <li>Cadastrar e editar veículos (mas não excluir)</li>
@@ -419,7 +551,7 @@
                         <li>Sem acesso à gestão de usuários</li>
                         <li>Sem permissão para mudar configurações ou permissões</li>
                     </ul>`,
-                motorista: `🚗 <strong>Motorista</strong><br>
+            motorista: `🚗 <strong>Motorista</strong><br>
                     <ul>
                         <li>Registrar seus próprios abastecimentos</li>
                         <li>Visualizar apenas:
@@ -429,115 +561,114 @@
                             </ul>
                         </li>
                     </ul>`
-            };
-            descricaoContainer.innerHTML = descricoes[nivelSelecionado] || '';
-        }
+        };
+        descricaoContainer.innerHTML = descricoes[nivelSelecionado] || '';
+    }
 
-        // Máscaras e validações utilitárias
-        function mascaraCPF(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            input.value = value;
-        }
+    // Máscaras e validações utilitárias
+    function mascaraCPF(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        input.value = value;
+    }
 
-        function mascaraRG(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value.length > 9) value = value.slice(0, 9);
-            value = value.replace(/(\d{2})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1})$/, '$1-$2');
-            input.value = value;
-        }
+    function mascaraRG(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 9) value = value.slice(0, 9);
+        value = value.replace(/(\d{2})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d{1})$/, '$1-$2');
+        input.value = value;
+    }
 
-        function mascaraCNH(input) {
-            input.value = input.value.replace(/\D/g, '').slice(0, 9);
-        }
+    function mascaraCNH(input) {
+        input.value = input.value.replace(/\D/g, '').slice(0, 9);
+    }
 
-        function mascaraSenha(input) {
-            input.value = input.value.replace(/\D/g, '').slice(0, 4);
-        }
+    function mascaraSenha(input) {
+        input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    }
 
-        function mascaraNome(input) {
-            input.value = input.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
-        }
+    function mascaraNome(input) {
+        input.value = input.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
+    }
 
-        function verificarValidadeCNH() {
-            const input = document.getElementById('cnh-validade-editar');
-            if (!input || !input.value) return;
-            const partes = input.value.split('-');
-            if (partes.length !== 3) return;
-            const dataInformada = new Date(partes[0], partes[1] - 1, partes[2]);
-            const hoje = new Date();
-            hoje.setHours(0, 0, 0, 0);
-            if (dataInformada < hoje) {
-                alert('A CNH está vencida!');
-            }
+    function verificarValidadeCNH() {
+        const input = document.getElementById('cnh-validade-editar');
+        if (!input || !input.value) return;
+        const partes = input.value.split('-');
+        if (partes.length !== 3) return;
+        const dataInformada = new Date(partes[0], partes[1] - 1, partes[2]);
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+        if (dataInformada < hoje) {
+            alert('A CNH está vencida!');
         }
+    }
 
-        function validarPlaca(input) {
-            let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            value = value.slice(0, 7);
-            let letras = (value.match(/[A-Z]/g) || []).length;
-            let numeros = (value.match(/[0-9]/g) || []).length;
-            if (letras > 4) {
-                let nova = '';
-                let countL = 0, countN = 0;
-                for (let c of value) {
-                    if (/[A-Z]/.test(c) && countL < 4) {
-                        nova += c;
-                        countL++;
-                    } else if (/[0-9]/.test(c) && countN < 3) {
-                        nova += c;
-                        countN++;
-                    }
-                    if (nova.length === 7) break;
+    function validarPlaca(input) {
+        let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        value = value.slice(0, 7);
+        let letras = (value.match(/[A-Z]/g) || []).length;
+        let numeros = (value.match(/[0-9]/g) || []).length;
+        if (letras > 4) {
+            let nova = '';
+            let countL = 0, countN = 0;
+            for (let c of value) {
+                if (/[A-Z]/.test(c) && countL < 4) {
+                    nova += c;
+                    countL++;
+                } else if (/[0-9]/.test(c) && countN < 3) {
+                    nova += c;
+                    countN++;
                 }
-                value = nova;
+                if (nova.length === 7) break;
             }
-            letras = (value.match(/[A-Z]/g) || []).length;
-            numeros = (value.match(/[0-9]/g) || []).length;
-            if (numeros > 3) {
-                let nova = '';
-                let countL = 0, countN = 0;
-                for (let c of value) {
-                    if (/[A-Z]/.test(c) && countL < 4) {
-                        nova += c;
-                        countL++;
-                    } else if (/[0-9]/.test(c) && countN < 3) {
-                        nova += c;
-                        countN++;
-                    }
-                    if (nova.length === 7) break;
+            value = nova;
+        }
+        letras = (value.match(/[A-Z]/g) || []).length;
+        numeros = (value.match(/[0-9]/g) || []).length;
+        if (numeros > 3) {
+            let nova = '';
+            let countL = 0, countN = 0;
+            for (let c of value) {
+                if (/[A-Z]/.test(c) && countL < 4) {
+                    nova += c;
+                    countL++;
+                } else if (/[0-9]/.test(c) && countN < 3) {
+                    nova += c;
+                    countN++;
                 }
-                value = nova;
+                if (nova.length === 7) break;
             }
-            input.value = value;
-            letras = (value.match(/[A-Z]/g) || []).length;
-            numeros = (value.match(/[0-9]/g) || []).length;
-            if (value.length === 7 && letras === 4 && numeros === 3) {
-                input.setCustomValidity('');
-            } else {
-                input.setCustomValidity('A placa deve conter exatamente 4 letras e 3 números.');
-            }
+            value = nova;
         }
-
-        function mostrarNomeArquivo(input) {
-            const nome = input.files && input.files.length > 0 ? input.files[0].name : '';
-            document.getElementById('nome-arquivo').textContent = nome;
-            document.getElementById('input-file-text').textContent = nome ? 'Arquivo selecionado' : 'Clique ou arraste para enviar';
+        input.value = value;
+        letras = (value.match(/[A-Z]/g) || []).length;
+        numeros = (value.match(/[0-9]/g) || []).length;
+        if (value.length === 7 && letras === 4 && numeros === 3) {
+            input.setCustomValidity('');
+        } else {
+            input.setCustomValidity('A placa deve conter exatamente 4 letras e 3 números.');
         }
+    }
 
-        // Modo escuro ao carregar
-        document.addEventListener('DOMContentLoaded', () => {
-            const isDarkMode = localStorage.getItem('modoEscuro') === 'true';
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-            }
-        });
-    </script>
+    function mostrarNomeArquivo(input) {
+        const nome = input.files && input.files.length > 0 ? input.files[0].name : '';
+        document.getElementById('nome-arquivo').textContent = nome;
+        document.getElementById('input-file-text').textContent = nome ? 'Arquivo selecionado' : 'Clique ou arraste para enviar';
+    }
+
+    // Modo escuro ao carregar
+    document.addEventListener('DOMContentLoaded', () => {
+        const isDarkMode = localStorage.getItem('modoEscuro') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        }
+    });
+</script>
 </body>
-
 </html>

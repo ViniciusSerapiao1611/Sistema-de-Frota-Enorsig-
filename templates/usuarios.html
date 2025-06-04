@@ -6,23 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuários - EnorFrota</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/usuarios.css">
-    <link rel="stylesheet" href="css/usuarios-principal.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios-principal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <style>
+        .status-btn.ativo.selecionado { 
+            background: #28a745;
+            color: #fff;
+            border-color: #28a745; 
+        }
+
+        .status-btn.inativo.selecionado { 
+            background: #dc3545;
+            color: #fff;
+            border-color: #dc3545; 
+        }
+
+        .status-btn.ferias.selecionado { 
+            background: #ffc107;
+            color: #212529;
+            border-color: #ffc107; 
+        }
+    </style>
 </head>
 <body>
-    <!-- Botão de alternância de modo escuro -->
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
-    </div>
-
     <!-- Barra lateral -->
     <!-- Botões de menu e modo escuro -->
     <button class="menu-toggle" onclick="alternarMenu()">☰ Menu</button>
-    <div class="botao-toggle" id="botaoToggle" onclick="alternarModoEscuro()">
-        <div class="circulo"></div>
     </div>
 
     <!-- Barra lateral -->
@@ -83,7 +93,7 @@
 
         <div class="informacoes-usuario">
             <div class="avatar-usuario">
-                <img src="img/avatar.jpg" alt="Foto do Usuário">
+                <img src="{{ url_for('static', filename='img/avatar.jpg') }}" alt="Foto do Usuário">
             </div>
             <div class="detalhes-usuario">
                 <p>{{session.user_name}}</p>
@@ -91,8 +101,15 @@
             </div>
         </div>
     </div>
-    <!-- Conteúdo principal -->
-    <div class="conteudo">
+    <!-- Conteúdo principal com CSS-->
+    <div class="conteudo" style="margin-left: 200px; 
+        padding: 20px;
+        background-color: #ebebeb;
+        border-radius: 10px;
+        width: calc(100% - 250px);
+        min-height: 100vh;
+        box-sizing: border-box">
+
         <h2>Gerenciamento de Perfis</h2>
         <form id="form-usuario">
             <!-- Container para Dados Pessoais -->
@@ -110,7 +127,7 @@
                     </div>
                     <div>
                         <label for="nome-editar">Nome *</label>
-                        <input type="text" id="Nome" name="Nome" required oninput="mascaraNome(this)">
+                        <input type="text" id="NOME" name="NOME" required oninput="mascaraNOME(this)">
                     </div>
                     <div>
                         <label for="data-nascimento-editar">Data de nascimento *</label>
@@ -383,7 +400,7 @@
             // Remove a notificação após 3 segundos e redireciona
             setTimeout(() => {
                 notificacao.remove();
-                window.location.href = 'usuarios-principal.html'; // Redireciona para a página principal
+                window.location.href = '{{url_for('usuarios_principal')}}'; // Redireciona para a página principal
             }, 3000);
         }
 
@@ -479,20 +496,21 @@
 
             // Monta o objeto com os campos conforme o backend espera
             const funcionario = {
-        Nome: document.getElementById("Nome").value,
-        RG: document.getElementById("RG").value,
-        CPF: document.getElementById("CPF").value,
-        CentroCusto: document.getElementById("CentroCusto").value,
-        CNH: document.getElementById("CNH").value,
-        Categoria_CNH: document.getElementById("Categoria_CNH").value,
-        Validade_CNH: document.getElementById("Validade_CNH").value,
-        Nivel_acesso: document.getElementById("Nivel_acesso").value,
-        Data_nascimento: document.getElementById("Data_nascimento").value,
-        Placa: document.getElementById("Placa").value,
-        ID_Cartao: document.getElementById("ID_Cartao").value,
-        Email: document.getElementById("Email").value,
-        Senha: document.getElementById("Senha").value
-    };
+    NOME: document.getElementById("NOME").value,
+    RG: document.getElementById("RG").value,
+    CPF: document.getElementById("CPF").value,
+    CENTRO_CUSTO: document.getElementById("CentroCusto").value,
+    CNH: document.getElementById("CNH").value,
+    CATEGORIA_CNH: document.getElementById("Categoria_CNH").value,
+    VALIDADE_CNH: document.getElementById("Validade_CNH").value,
+    NIVEL_ACESSO: document.getElementById("Nivel_acesso").value,
+    DATA_NASCIMENTO: document.getElementById("Data_nascimento").value,
+    PLACA: document.getElementById("Placa").value,
+    ID_CARTAO: document.getElementById("ID_Cartao").value,
+    EMAIL: document.getElementById("Email").value,
+    SENHA: document.getElementById("Senha").value,
+    TELEFONE: document.getElementById("Telefone") ? document.getElementById("Telefone").value : ""
+};
 
     try {
         const resposta = await fetch('http://127.0.0.1:5000/api/funcionarios', {
@@ -621,6 +639,35 @@
                 input.setCustomValidity('A placa deve conter exatamente 4 letras e 3 números.');
             }
         }
+
+        function confirmarAlteracoes() {
+    document.getElementById('form-usuario').requestSubmit();
+    fecharModalConfirmacao();
+}
+
+document.getElementById('formNovoCentroCusto').onsubmit = function(e) {
+    e.preventDefault();
+    const centroCusto = {
+        ID_CENTRO_CUSTO: document.getElementById("inputIdCentroCusto").value,
+        NOME: document.getElementById("inputNome").value,
+        RESPONSAVEL: document.getElementById("inputResponsavel").value,
+        STATUS: document.getElementById("inputStatus").value
+    };
+    fetch('http://localhost:5000/api/centros_custo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(centroCusto)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error();
+        carregarCentrosCusto();
+        this.reset();
+    })
+    .catch(err => {
+        alert("Erro ao salvar centro de custo.");
+        console.error(err);
+    });
+}
     </script>
 </body>
 </html>

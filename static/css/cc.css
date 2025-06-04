@@ -190,7 +190,7 @@ body.dark-mode .container {
 
 /* Conteúdo principal */
 .conteudo {
-    margin-left: 270px;
+    margin-left: 210px;
     padding: 20px;
     width: calc(100% - 270px); /* Ajusta a largura para ocupar o restante da tela */
     height: 100%; /* Ocupa toda a altura disponível */

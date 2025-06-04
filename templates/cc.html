@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centro de Custo - EnorFrota</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/cc.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cc.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
     
@@ -161,11 +160,11 @@
                         row.innerHTML = `
                             <td>${centro.id}</td>
                             <td>${centro.id_centro_custo}</td>
-                            <td>${centro.nome}</td>
-                            <td>${centro.responsavel}</td>
-                            <td><span class="status-badge ${status.toLowerCase()}">${status}</span></td>
+                            <td><span class="nome-badge">${centro.nome}</span></td>
+                            <td><span class="responsavel-badge">${centro.responsavel}</span></td>
+                            <td><span class="status-${status.toLowerCase()}" id="status-span-${centro.id}">${status}</span></td>
                             <td>
-                                <button onclick="toggle     StatusCC(${centro.id}, '${status}')" title="${status === 'Ativo' ? 'Inativar' : 'Ativar'}" style="background:none;border:none;cursor:pointer;">
+                                <button onclick="toggleStatusCC(${centro.id}, '${status}')" id="btn-status-${centro.id}" title="${status === 'Ativo' ? 'Inativar' : 'Ativar'}" style="background:none;border:none;cursor:pointer;">
                                     <i class="fas fa-power-off" style="color:${status === 'Ativo' ? 'green' : 'red'};font-size:1.2em;"></i>
                                 </button>
                             </td>
@@ -189,7 +188,22 @@
             })
             .then(res => {
                 if (!res.ok) throw new Error();
-                carregarCentrosCusto();
+                // Atualiza o status na tabela sem recarregar tudo
+                const statusSpan = document.getElementById(`status-span-${id}`);
+                if (statusSpan) {
+                    statusSpan.textContent = novoStatus;
+                    statusSpan.className = `status-${novoStatus.toLowerCase()}`;
+                }
+                // Atualiza o botão e o ícone
+                const btn = document.getElementById(`btn-status-${id}`);
+                if (btn) {
+                    btn.title = novoStatus === 'Ativo' ? 'Inativar' : 'Ativar';
+                    btn.setAttribute('onclick', `toggleStatusCC(${id}, '${novoStatus}')`);
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.style.color = novoStatus === 'Ativo' ? 'green' : 'red';
+                    }
+                }
             })
             .catch(err => {
                 alert("Erro ao atualizar status.");
@@ -200,16 +214,16 @@
         // Envia novo centro de custo para o backend
         document.getElementById('formNovoCentroCusto').onsubmit = function(e) {
             e.preventDefault();
-            const novoCentro = {
-                id_centro_custo: document.getElementById('inputIdCentroCusto').value,
-                nome: document.getElementById('inputNome').value,
-                responsavel: document.getElementById('inputResponsavel').value,
-                status: document.getElementById('inputStatus').value
+            const centroCusto = {
+                ID_CENTRO_CUSTO: document.getElementById("inputIdCentroCusto").value,
+                NOME: document.getElementById("inputNome").value,
+                RESPONSAVEL: document.getElementById("inputResponsavel").value,
+                STATUS: document.getElementById("inputStatus").value
             };
-            fetch('http://localhost:5000/api/centros_custo', {
+            fetch('/api/centros_custo', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(novoCentro)
+                body: JSON.stringify(centroCusto)
             })
             .then(res => {
                 if (!res.ok) throw new Error();
